@@ -1,0 +1,23 @@
+#header,
+#content,
+footer{
+  width:1024px;
+  margin:0 auto;
+}
+
+
+footer{
+  overflow:hidden;
+}
+
+footer .left{
+  float:left;
+  width:500px;
+  margin-top:2px;
+}
+
+footer .right{
+  float:right;
+  text-align:right;
+  width:430px;
+}

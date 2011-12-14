@@ -2,9 +2,48 @@
 html
   head
     link(rel: 'shortcut icon', href: '/favicon.ico')
-    title ZiftBot
+    title= typeof(title) !== 'undefined' ? title : "ZiftBot"
+    script(src='js/libs/modernizr-2.0.6.min.js')
+    link(rel='stylesheet', href='css/style.css')
+    link(rel='stylesheet', href='css/bootstrap-1.2.0.min.css')
   body
     #wrap
       #header
       #content!= body
-      #footer
+      footer
+        .left By 
+          a(href="http://twitter.com/trucy") Trucy Phan
+          |  and 
+          a(href="http://twitter.com/brendannee") Brendan Nee
+          |  and 
+          a(href="http://twitter.com/cpetzold") Conner Petzold
+          |  for
+          a(href="http://developer.zappos.com/blog/gifting-zappos-api-hackathon-hack-long-contest") Zappos API Hackathon
+        .right.
+          <!-- AddThis Button BEGIN -->
+          <div class="addthis_toolbox addthis_default_style ">
+          <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+          <a class="addthis_button_tweet" tw:via="ziftbot" tw:text="Zappos Gift Bot - find wacky gifts"></a>
+          <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+          </div>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xefiro"></script>
+          <!-- AddThis Button END -->
+          
+          
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js')
+  script(src='js/plugins.js')
+  script(src='js/script.js')
+  
+  // Google Analytics
+  script.
+    var _gaq=[['_setAccount','UA-XXXXXXXX'],['_trackPageview'],['_trackPageLoadTime']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+
+  //if lt IE 7
+    script(defer, src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js")
+    script.
+      window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})
+
+        
