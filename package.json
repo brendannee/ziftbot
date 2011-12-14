@@ -1,6 +1,6 @@
 {
-  "name": "zappos",
-  "description": "zappos",
+  "name": "ZiftBot",
+  "description": "Zappos Gift Bot",
   "version": "0.0.1",
   "dependencies": {
       "express": "2.5.0"
