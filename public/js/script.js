@@ -2,6 +2,7 @@ var recipient
   , recipientType
   , gender
   , pronoun
+  , posessiveAdjective
   , ignore = []
   , currentVid;
 
@@ -96,7 +97,7 @@ function displayQuestions(data, textStatus, jqXHR){
     for(var i in data.a){
       var answer = data.a[i];
       answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '" data-product="' + answer.product + '">' + 
-        capitaliseFirstLetter(answer.text.replace('{{pronoun}}', pronoun)) + 
+        capitaliseFirstLetter(answer.text.replace(/{{pronoun}}/g, pronoun)) + 
         '</a>';
         if(answer.product){
           product_id = answer.product;
@@ -107,7 +108,7 @@ function displayQuestions(data, textStatus, jqXHR){
     $('#questions')
       .append(
         '<div class="question">' +
-        '<div class="questionText">' + data.q.replace('{{pronoun}}', pronoun) + '</div>' +
+        '<div class="questionText">' + data.q.replace(/{{pronoun}}/g, pronoun).replace(/{{posessiveAdjective}}/g, posessiveAdjective).replace(/{{recipientType}}/g, recipientType) + '</div>' +
         '<div class="answers">' + answers + '</div>' +
         '</div>'
       );
@@ -181,9 +182,9 @@ function questionError(jqXHR, textStatus) {
     $('#questions')
       .append(
         '<div class="question">' +
-        '<div class="questionText">Thats all the gift ideas we\'ve got.  Would you like to try again?</div>' +
+        '<div class="questionText">We\'re out of ideas.  Would you like to try Ziftbot again?</div>' +
         '<div class="answers">' +
-        '<a class="btn large primary" data-next="1" data-type="reset" >Sure, why not?</a>' +
+        '<a class="btn large primary" data-next="1" data-type="reset" >Yes</a>' +
         '</div>'
       );
         
@@ -221,6 +222,7 @@ function logDemographics(type, value) {
     case 'gender':
       gender = value;
       pronoun = (gender == 'male') ? 'he' : 'she';
+      posessiveAdjective = (gender == 'male') ? 'his' : 'her';
       switch(recipient){
         case 'friend':
           recipientType = 'friend';
