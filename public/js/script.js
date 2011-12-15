@@ -21,35 +21,35 @@ $(document).ready(function(){
     if(next_question != 'undefined' && next_question){
       //do next demographic question
       $.getJSON('/api/demographics/' + next_question, displayQuestions);
-		} else if( $(this).attr('data-type') == 'product' ) {
-			//show product
-			return true;
-			
+    } else if( $(this).attr('data-type') == 'product' ) {
+      //show product
+      return true;
+      
     } else if( $(this).attr('data-value') == 'yes' ) {
-	    $('#questions').append('<div class="question product">' +
-				$(this).attr('data-product') +
-				'<div class="questionText">Is this a good gift?</div>' +
-				'<div class="answers">' +
-				'<a href="http://zappos.com" class="btn large primary" data-type="product">Yes!</a>' +
-				'<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
-				'</div>'
-			);
-			  
-			scrollQuestions();
-			
-		} else {
+      $('#questions').append('<div class="question product">' +
+        $(this).attr('data-product') +
+        '<div class="questionText">Is this a good gift?</div>' +
+        '<div class="answers">' +
+        '<a href="http://zappos.com" class="btn large primary" data-type="product">Yes!</a>' +
+        '<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
+        '</div>'
+      );
+        
+      scrollQuestions();
+      
+    } else {
       //do production questions
-			$.ajax({
-			  	url: '/api/questions'
-			  ,	dataType: 'json'
-				, data: {
-        	  recipient: recipient
-       	 	, gender: gender
-					, ignore: ignore.join(',')
-        	}
-			  , success: displayQuestions
-				, error: questionError
-			});
+      $.ajax({
+          url: '/api/questions'
+        , dataType: 'json'
+        , data: {
+            recipient: recipient
+          , gender: gender
+          , ignore: ignore.join(',')
+          }
+        , success: displayQuestions
+        , error: questionError
+      });
     }
     
     return false;
@@ -60,11 +60,11 @@ $(document).ready(function(){
 function displayQuestions(data, textStatus, jqXHR){
   console.log(data);
   if(textStatus=='success'){
-	  
-	 	//Log question as seen
-		if(data.id != undefined){
-			ignore.push(data.id);
-		}
+    
+    //Log question as seen
+    if(data.id != undefined){
+      ignore.push(data.id);
+    }
 
     //prepare answers
     var answers = ''
@@ -96,7 +96,7 @@ function displayQuestions(data, textStatus, jqXHR){
       .appendTo('#questions');
       
       //scroll questions
-    	scrollQuestions();
+      scrollQuestions();
       
       
   } else {
@@ -105,24 +105,24 @@ function displayQuestions(data, textStatus, jqXHR){
 };
 
 function questionError(jqXHR, textStatus) {
-	if(jqXHR.status == 402){
-		//out of questions, so clear all variables 
-		recipient = '';
-		gender = '';
-		ignore = [];
-		
+  if(jqXHR.status == 402){
+    //out of questions, so clear all variables 
+    recipient = '';
+    gender = '';
+    ignore = [];
+    
     $('#questions').append('<div class="question">' +
       '<div class="questionText">Thats all the gift ideas we\'ve got.  Would you like to try again?</div>' +
-			'<div class="answers">' +
-			'<a class="btn large primary" data-next="1" >Sure, why not?</a>' +
-			'</div>'
-		);
-			  
-		scrollQuestions();
-		
-	} else {
-		console.log(jqXHR);
-	}
+      '<div class="answers">' +
+      '<a class="btn large primary" data-next="1" >Sure, why not?</a>' +
+      '</div>'
+    );
+        
+    scrollQuestions();
+    
+  } else {
+    console.log(jqXHR);
+  }
 }
 
 function scrollQuestions(){
