@@ -1,6 +1,11 @@
-var express = require('express');
+var express = require('express')
+  , expressNamespace = require('express-namespace')
+  , Zappos = require('zappos');
   
 module.exports = function(app) {
+  
+  var key = process.env.ZAPPOS_KEY || require('./key');
+	app.set('zappos', new Zappos(key));
   
   app.configure(function() {
     this.use(express.cookieParser())
