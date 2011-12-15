@@ -1,15 +1,15 @@
 a {
-	color: #558abe;
+  color: #558abe;
 }
 
 #header {
-	margin: 30px auto;
-	text-align: center;
+  margin: 30px auto;
+  text-align: center;
 }
 
 #header .logo {
-	margin: 30px auto;
-	width: 300px;
+  margin: 30px auto;
+  width: 300px;
 }
 
 #header,
@@ -38,18 +38,18 @@ footer{
 }
 
 .btn.large {
-	margin: 20px auto;
+  margin: 20px auto;
 }
 
 a.btn.primary {
-	background: #f1f1f1;
-	background-color: #f1f1f1;
-	color: #14172A;
-	background-image: none;
+  background: #f1f1f1;
+  background-color: #f1f1f1;
+  color: #14172A;
+  background-image: none;
 }
 
 a.btn.primary:hover {
-	background: #b6cde3;
+  background: #b6cde3;
 }
 
 footer{
@@ -92,6 +92,7 @@ footer .right{
 #questions .question .questionText{
   font-weight:bold;
   font-size:30px;
+  line-height:34px;
   color: #14172A;
 }
 
@@ -102,6 +103,6 @@ footer .right{
 }
 
 .answers {
-	margin-top: 40px;
+  margin-top: 40px;
   line-height:42px;
 }
