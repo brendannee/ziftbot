@@ -41,7 +41,7 @@ footer .right{
 }
 
 
-#questions_frame{
+#questionsFrame{
   width:600px;
   height:400px;
   overflow:hidden;
@@ -64,5 +64,6 @@ footer .right{
 #questions .question .questionText{
   font-weight:bold;
   font-size:30px;
+  line-height:42px;
   margin:0 0 18px 0;
 }
