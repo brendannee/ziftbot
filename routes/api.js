@@ -6,6 +6,7 @@ var fs = require('fs')
 //Add index to questions
 questions.forEach(function(q, i) {
 	questions[i].id = i;
+	questions[i].type = 'question';
 });
 
 exports.getDemographics = function(req, res) {

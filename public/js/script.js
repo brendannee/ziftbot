@@ -18,11 +18,27 @@ $(document).ready(function(){
     }
     
     var next_question = $(this).attr('data-next');
-    if(next_question != 'undefined'){
+    if(next_question != 'undefined' && next_question){
       //do next demographic question
       $.getJSON('/api/demographics/' + next_question, displayQuestions);
-    } else {
-      //start product questions
+		} else if( $(this).attr('data-type') == 'product' ) {
+			//show product
+			return true;
+			
+    } else if( $(this).attr('data-value') == 'yes' ) {
+	    $('#questions').append('<div class="question product">' +
+				$(this).attr('data-product') +
+				'<div class="questionText">Is this a good gift?</div>' +
+				'<div class="answers">' +
+				'<a href="http://zappos.com" class="btn large primary" data-type="product">Yes!</a>' +
+				'<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
+				'</div>'
+			);
+			  
+			scrollQuestions();
+			
+		} else {
+      //do production questions
 			$.ajax({
 			  	url: '/api/questions'
 			  ,	dataType: 'json'
@@ -62,7 +78,7 @@ function displayQuestions(data, textStatus, jqXHR){
     
     for(var i in data.a){
       var answer = data.a[i];
-      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '">' + 
+      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '" data-product="' + answer.product + '">' + 
         answer.text + 
         '</a>';
     };
