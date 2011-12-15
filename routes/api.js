@@ -2,6 +2,11 @@ var fs = require('fs')
   , _ = require('underscore')
   , demographics = require('../lib/demographics')
   , questions = require('../lib/questions');
+  
+//Add index to questions
+questions.forEach(function(q, i) {
+	questions[i].id = i;
+});
 
 exports.getDemographics = function(req, res) {
   var question_id = req.param('question_id'),

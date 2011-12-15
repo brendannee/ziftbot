@@ -1,5 +1,6 @@
 var recipient
-  , gender;
+  , gender
+  , ignore = [];
 
 $(document).ready(function(){
   //load first question
@@ -23,8 +24,9 @@ $(document).ready(function(){
     } else {
       //start product questions
       $.getJSON('/api/questions', {
-        'recipient': recipient,
-        'gender': gender
+        recipient: recipient,
+        gender: gender,
+				ignore: ignore.join(',')
         }, displayQuestions);
     }
     
@@ -36,6 +38,11 @@ $(document).ready(function(){
 function displayQuestions(data, textStatus, jqXHR){
   console.log(data);
   if(textStatus=='success'){
+	  
+	 	//Log question as seen
+		if(data.id != undefined){
+			ignore.push(data.id);
+		}
 
     //prepare answers
     var answers = ''
