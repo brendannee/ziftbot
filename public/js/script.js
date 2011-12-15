@@ -33,23 +33,23 @@ $(document).ready(function(){
 
 });
 
-function displayQuestions(data){
+function displayQuestions(data, textStatus, jqXHR){
   console.log(data);
-  if(data.statusCode==200){
+  if(textStatus=='success'){
 
     //prepare answers
     var answers = ''
     , answerClass;
     //if two answers, display side-by-side.  If more, display in one column
-    if(Object.keys(data.question.a).length > 2){
+    if(Object.keys(data.a).length > 2){
       answerClass = "multiple";
     } else {
       answerClass = "two";
     }
     
-    for(var i in data.question.a){
-      var answer = data.question.a[i];
-      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.question.type + '" data-value="' + i + '">' + 
+    for(var i in data.a){
+      var answer = data.a[i];
+      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '">' + 
         answer.text + 
         '</a>';
     };
@@ -62,7 +62,7 @@ function displayQuestions(data){
     $(questionDiv)
       .append($('<div/>',{
         class:"questionText",
-        html:data.question.q
+        html:data.q
       }))
       .append($('<div/>',{
         class:"answers",
@@ -81,6 +81,6 @@ function displayQuestions(data){
       
       
   } else {
-    console.log('Error retrieving question');
+    console.log(textStatus + ' Error retrieving question');
   }
 };
