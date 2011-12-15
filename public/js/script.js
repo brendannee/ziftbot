@@ -1,12 +1,20 @@
 var recipient
   , gender
-  , ignore = [];
+  , ignore = []
+  , currentVid;
 
 $(document).ready(function(){
   //load first question
   $.getJSON('/api/demographics/1', displayQuestions);
 
   $('#questions').on('click', '.answers a', function(){
+    //stop all playing videos
+    try{
+      currentVid.pause();
+    }
+    catch(e){
+    }
+    
     //log answer
     switch($(this).attr('data-type')){
       case 'recipient':
@@ -17,7 +25,14 @@ $(document).ready(function(){
         break;
     }
     
-    var next_question = $(this).attr('data-next');
+    //if reset, then clear all old divs
+    if( $(this).attr('data-type') == 'reset' ) {
+      $('#questions').find('.question').not($(this).parents('.question')).remove();
+      $('#questions').css('marginLeft',0);
+    }
+    
+    var next_question = $(this).attr('data-next')
+      , next_div = $(this).parents('.question').next();
     if(next_question != 'undefined' && next_question){
       //do next demographic question
       $.getJSON('/api/demographics/' + next_question, displayQuestions);
@@ -29,11 +44,16 @@ $(document).ready(function(){
       //product page is pre-rendered
       scrollQuestions();
       
+      //render videoJS and start video, if the next question contains a video
+      if($('video', next_div).length){
+        currentVid = VideoJS.setup('video-'+ next_div.attr('id'));
+        currentVid.play();
+      }
     } else {
       //do product questions
       
       //remove pre-rendered product in next sibling div
-      $(this).parents('.question').next().remove();
+      next_div.remove();
       
       $.ajax({
           url: '/api/questions'
@@ -98,14 +118,42 @@ function displayQuestions(data, textStatus, jqXHR){
     //now lookup product info to preload product div
     if(product_id){
       $.getJSON('/api/product/' + product_id, function(data){
-        var product = data[0];
-        var style = product.styles[0];
+        var product = data[0]
+          , style = product.styles[0]
+          , video = {}
+          , media;
         console.log(data);
+        
+        $.each(product.videos, function(i, value){
+          if(value.videoEncodingExtension == 'mp4'){
+            video.mp4 = value.filename;
+          } else if(value.videoEncodingExtension == 'flv'){
+            video.flv = value.filename;
+          }
+        });
+        console.log(video);
+        if(video.mp4){
+          media = '<div class="video-js-box vim-css">' +
+                  '<video id="video-' + product.productId + '" width="550" height="306" controls poster="' + style.imageUrl + '">' +
+                    '<source src="' + video.mp4 + '"  type="video/mp4" />' +
+                    '<object width="640" height="360" type="application/x-shockwave-flash" data="' + video.swf + '">' + 
+                      '<param name="movie" value="' + video.swf + '" />' +
+                      '<param name="flashvars" value="autostart=true&amp;controlbar=over&amp;image=' + style.imageUrl + '&amp;file=' + video.mp4 + '" />' +
+                    '</object>' +
+                  '</video>' +
+                  '</div>';
+        } else {
+          media = '<div class="productImage">' +
+            '<img src="' + style.imageUrl + '" alt="' + product.brandName + ' ' + product.productName + '">' +
+            '</div>';
+        }
+
+        
         $('#questions')
           .append(
-            '<div class="question product">' +
+            '<div class="question product" id="' + product.productId + '">' +
             '<div class="questionText">Would your friend like a ' + product.brandName + ' ' + product.productName + '?</div>' +
-            '<div class="productImage"><img src="' + style.imageUrl + '" alt="' + product.brandName + ' ' + product.productName + '"></div>' +
+            media +
             '<div class="productInfo">' + style.price + '</div>' +
             '<div class="answers">' +
             '<a href="' + product.defaultProductUrl + '" title="' + product.brandName + ' ' + product.productName + '" class="btn large primary two" data-type="product">Yes!</a>' +
@@ -135,7 +183,7 @@ function questionError(jqXHR, textStatus) {
         '<div class="question">' +
         '<div class="questionText">Thats all the gift ideas we\'ve got.  Would you like to try again?</div>' +
         '<div class="answers">' +
-        '<a class="btn large primary" data-next="1" >Sure, why not?</a>' +
+        '<a class="btn large primary" data-next="1" data-type="reset" >Sure, why not?</a>' +
         '</div>'
       );
         
