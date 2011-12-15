@@ -99,15 +99,17 @@ function displayQuestions(data, textStatus, jqXHR){
     if(product_id){
       $.getJSON('/api/product/' + product_id, function(data){
         var product = data[0];
+        var style = product.styles[0];
         console.log(data);
         $('#questions')
           .append(
             '<div class="question product">' +
             '<div class="questionText">Would your friend like a ' + product.brandName + ' ' + product.productName + '?</div>' +
-            '<div class="productImage"><img src="' + product.defaultImageUrl + '" alt="' + product.brandName + ' ' + product.productName + '"></div>' +
+            '<div class="productImage"><img src="' + style.imageUrl + '" alt="' + product.brandName + ' ' + product.productName + '"></div>' +
+            '<div class="productInfo">' + style.price + '</div>' +
             '<div class="answers">' +
-            '<a href="' + product.defaultProductUrl + '" title="' + product.brandName + ' ' + product.productName + '" class="btn large primary" data-type="product">Yes!</a>' +
-            '<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
+            '<a href="' + product.defaultProductUrl + '" title="' + product.brandName + ' ' + product.productName + '" class="btn large primary two" data-type="product">Yes!</a>' +
+            '<a class="btn large primary two" data-type="question">No, ask me more questions</a>' +
             '</div>' +
             '</div>'
           );

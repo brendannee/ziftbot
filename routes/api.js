@@ -73,7 +73,7 @@ module.exports = function routes(app){
     getProduct: function(req, res) {
       app.set('zappos').getProduct(
         req.param('product_id'), 
-        ['videos', 'productRating', 'overallRating', 'comforRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description'], 
+        ['videos', 'productRating', 'overallRating', 'comforRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
         function(err, data){
           res.json(err || data);
         });
