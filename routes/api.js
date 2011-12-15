@@ -1,4 +1,5 @@
 var fs = require('fs')
+  , _ = require('underscore')
   , demographics = require('../lib/demographics')
   , questions = require('../lib/questions');
 
@@ -14,8 +15,6 @@ exports.getDemographics = function(req, res) {
 };
 
 exports.getQuestions = function(req, res) {
-
-  // Required parameters
   var missing = [];
   [ 'gender', 'recipient' ].forEach(function(p) {
     if (!req.query[p]) {
@@ -33,7 +32,7 @@ exports.getQuestions = function(req, res) {
   };
 
   var error;
-  Object.keys(allowed).forEach(function(p) {
+  _.keys(allowed).forEach(function(p) {
     if (allowed[p].indexOf(req.param(p)) == -1) {
       error = req.param(p) + ' is an unknown ' + p;
     }
@@ -42,23 +41,23 @@ exports.getQuestions = function(req, res) {
   if (error) {
     return res.json(error, 400);
   }
+
+  var n = questions.length
+    , ignore = req.param('ignore') ? req.param('ignore').split(',') : false
+    , possibleQuestions = ignore
+        ? _.reject(_.clone(questions), function(q, i) { return _.contains(ignore, ''+i); })
+        : _.clone(questions);
   
-  var question = (function(query) { 
-    var question_id = Math.floor(Math.random() * questions.length)
-      , question = questions[question_id];
+  possibleQuestions = _.reject(possibleQuestions, function(q) {
+    return (!_.contains(q.genders, req.param('gender')) ||
+           !_.contains(q.recipients, req.param('recipient')));
+  });
 
-    if (question.genders.indexOf(query.gender) != -1 && 
-        question.recipients.indexOf(query.recipient) != -1) {
-      return question;
-    } else {
-      return arguments.callee(query);
-    }
-  })(req.query);
-
-  if (question) {
-    res.json(question);
+  if (!possibleQuestions.length) {
+    res.json('No more questions', 402);
   } else {
-    res.json('Question not found', 404);
+    var i = Math.floor(Math.random() * possibleQuestions.length);
+    res.json(possibleQuestions[i]);
   }
   
 };

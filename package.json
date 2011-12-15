@@ -6,5 +6,6 @@
       "express": "2.5.x"
     , "jade": "0.19.x"
     , "stylus": "0.20.x"
+    , "underscore": "1.2.x"
   }
 }
