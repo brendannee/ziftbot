@@ -1,5 +1,7 @@
 var recipient
+  , recipientType
   , gender
+  , pronoun
   , ignore = []
   , currentVid;
 
@@ -16,19 +18,11 @@ $(document).ready(function(){
     }
     
     //log answer
-    switch($(this).attr('data-type')){
-      case 'recipient':
-        recipient = $(this).attr('data-value');
-        break;
-      case 'gender':
-        gender = $(this).attr('data-value');
-        break;
-    }
+    logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
     
-    //if reset, then clear all old divs
+    //if reset, then clear all old variables and divs
     if( $(this).attr('data-type') == 'reset' ) {
-      $('#questions').find('.question').not($(this).parents('.question')).remove();
-      $('#questions').css('marginLeft',0);
+      resetQuestions($(this).parents('.question')[0]);
     }
     
     var next_question = $(this).attr('data-next')
@@ -46,7 +40,6 @@ $(document).ready(function(){
       
       //render videoJS and start video, if the next question contains a video
       if($('video', next_div).length){
-        currentVid = VideoJS.setup('video-'+ next_div.attr('id'));
         currentVid.play();
       }
     } else {
@@ -68,6 +61,13 @@ $(document).ready(function(){
       });
     }
     
+    return false;
+  });
+  
+  $('#reset').on('click', function(){
+    resetQuestions($('#questions .question')[0]);
+    
+    $.getJSON('/api/demographics/1', displayQuestions);
     return false;
   });
 
@@ -96,7 +96,7 @@ function displayQuestions(data, textStatus, jqXHR){
     for(var i in data.a){
       var answer = data.a[i];
       answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '" data-product="' + answer.product + '">' + 
-        answer.text + 
+        capitaliseFirstLetter(answer.text.replace('{{pronoun}}', pronoun)) + 
         '</a>';
         if(answer.product){
           product_id = answer.product;
@@ -107,7 +107,7 @@ function displayQuestions(data, textStatus, jqXHR){
     $('#questions')
       .append(
         '<div class="question">' +
-        '<div class="questionText">' + data.q + '</div>' +
+        '<div class="questionText">' + data.q.replace('{{pronoun}}', pronoun) + '</div>' +
         '<div class="answers">' + answers + '</div>' +
         '</div>'
       );
@@ -134,7 +134,7 @@ function displayQuestions(data, textStatus, jqXHR){
         console.log(video);
         if(video.mp4){
           media = '<div class="video-js-box vim-css">' +
-                  '<video id="video-' + product.productId + '" width="550" height="306" controls poster="' + style.imageUrl + '">' +
+                  '<video id="video-' + product.productId + '" width="550" height="306" controls>' +
                     '<source src="' + video.mp4 + '"  type="video/mp4" />' +
                     '<object width="640" height="360" type="application/x-shockwave-flash" data="' + video.swf + '">' + 
                       '<param name="movie" value="' + video.swf + '" />' +
@@ -152,7 +152,7 @@ function displayQuestions(data, textStatus, jqXHR){
         $('#questions')
           .append(
             '<div class="question product" id="' + product.productId + '">' +
-            '<div class="questionText">Would your friend like a ' + product.brandName + ' ' + product.productName + '?</div>' +
+            '<div class="questionText">Would your ' + recipientType + ' like a ' + product.brandName + ' ' + product.productName + '?</div>' +
             media +
             '<div class="productInfo">' + style.price + '</div>' +
             '<div class="answers">' +
@@ -161,6 +161,11 @@ function displayQuestions(data, textStatus, jqXHR){
             '</div>' +
             '</div>'
           );
+          
+        //render video, if present
+        if(video.mp4){
+          currentVid = VideoJS.setup('video-' + product.productId);
+        }
         
       });
     }
@@ -173,11 +178,6 @@ function displayQuestions(data, textStatus, jqXHR){
 
 function questionError(jqXHR, textStatus) {
   if(jqXHR.status == 402){
-    //out of questions, so clear all variables 
-    recipient = '';
-    gender = '';
-    ignore = [];
-    
     $('#questions')
       .append(
         '<div class="question">' +
@@ -202,4 +202,46 @@ function scrollQuestions(){
      duration: 'slow',
      easing: 'easeOutQuint'
   });
+}
+
+function resetQuestions(currentDiv) {
+  recipient = '';
+  gender = '';
+  ignore = [];
+  $('#questions').find('.question').not($(currentDiv)).remove();
+  
+  $('#questions').css('marginLeft',0);
+}
+
+function logDemographics(type, value) {
+  switch(type){
+    case 'recipient':
+      recipient = value;
+      break;
+    case 'gender':
+      gender = value;
+      pronoun = (gender == 'male') ? 'he' : 'she';
+      switch(recipient){
+        case 'friend':
+          recipientType = 'friend';
+          break;
+        case 'spouse':
+          recipientType = 'lover';
+          break;
+        case 'parent':
+          recipientType = (gender == 'male') ? 'dad' : 'mom';
+          break;
+        case 'child':
+          recipientType = (gender == 'male') ? 'son' : 'daughter';
+          break;
+        case 'enemy':
+          recipientType = 'enemy';
+          break;
+      }
+      break;
+  }
+}
+
+function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
