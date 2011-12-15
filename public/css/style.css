@@ -1,3 +1,17 @@
+a {
+	color: #558abe;
+}
+
+#header {
+	margin: 30px auto;
+	text-align: center;
+}
+
+#header .logo {
+	margin: 30px auto;
+	width: 300px;
+}
+
 #header,
 #content,
 footer{
@@ -7,10 +21,9 @@ footer{
 
 #content p.lead{
   margin-bottom: 9px;
-  color: gray;
+  color: #14172a;
   text-align: center;
   font-size:20px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
 }
 
 .btn{
@@ -22,6 +35,21 @@ footer{
   margin:10px;
   width:200px;
   text-align:center;
+}
+
+.btn.large {
+	margin: 20px auto;
+}
+
+a.btn.primary {
+	background: #f1f1f1;
+	background-color: #f1f1f1;
+	color: #14172A;
+	background-image: none;
+}
+
+a.btn.primary:hover {
+	background: #b6cde3;
 }
 
 footer{
@@ -46,7 +74,6 @@ footer .right{
   height:400px;
   overflow:hidden;
   margin:20px auto;
-  border:1px solid gray;
 }
 
 #questions{
@@ -59,10 +86,21 @@ footer .right{
   overflow:hidden;
   padding:20px;
   float:left;
+  text-align: center;
 }
 
 #questions .question .questionText{
   font-weight:bold;
   font-size:30px;
-  margin:0 0 18px 0;
+  color: #14172A;
+}
+
+#questions_frame.well {
+  background-color: #fff;
+  box-shadow: none;
+  border: none;
+}
+
+.answers {
+	margin-top: 40px;
 }
