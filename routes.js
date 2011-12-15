@@ -6,7 +6,7 @@ module.exports = function routes(app){
 
   // routes go here
   app.get('/', function(req, res){
-    res.render('index', { title: 'ZiftBot'})
+    res.render('index', { title: 'ZiftBot | Find the perfect Zappos gift by answering a few simple questions'})
   });
   
   app.namespace('/api', function(){

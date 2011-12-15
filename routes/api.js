@@ -71,11 +71,12 @@ module.exports = function routes(app){
     },
 
     getProduct: function(req, res) {
-      app.set('zappos').getProduct(req.param('product_id'), ['videos', 'productRating', 'overallRating', 'comforRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory'], function(err, data){
-        console.log(err);
-        console.log(data);
-        res.json(err || data);
-      });
+      app.set('zappos').getProduct(
+        req.param('product_id'), 
+        ['videos', 'productRating', 'overallRating', 'comforRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description'], 
+        function(err, data){
+          res.json(err || data);
+        });
     }
   }
 }

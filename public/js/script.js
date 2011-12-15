@@ -26,19 +26,15 @@ $(document).ready(function(){
       return true;
       
     } else if( $(this).attr('data-value') == 'yes' ) {
-      $('#questions').append('<div class="question product">' +
-        $(this).attr('data-product') +
-        '<div class="questionText">Is this a good gift?</div>' +
-        '<div class="answers">' +
-        '<a href="http://zappos.com" class="btn large primary" data-type="product">Yes!</a>' +
-        '<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
-        '</div>'
-      );
-        
+      //product page is pre-rendered
       scrollQuestions();
       
     } else {
-      //do production questions
+      //do product questions
+      
+      //remove pre-rendered product in next sibling div
+      $(this).parents('.question').next().remove();
+      
       $.ajax({
           url: '/api/questions'
         , dataType: 'json'
@@ -68,7 +64,8 @@ function displayQuestions(data, textStatus, jqXHR){
 
     //prepare answers
     var answers = ''
-    , answerClass;
+      , answerClass
+      , product_id;
     //if two answers, display side-by-side.  If more, display in one column
     if(Object.keys(data.a).length > 2){
       answerClass = "multiple";
@@ -81,23 +78,43 @@ function displayQuestions(data, textStatus, jqXHR){
       answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '" data-product="' + answer.product + '">' + 
         answer.text + 
         '</a>';
+        if(answer.product){
+          product_id = answer.product;
+        }
     };
     
     //Create div, add stuff then append as a question
-    $('<div/>',{ class:"question" })
-      .append($('<div/>',{
-        class:"questionText",
-        html:data.q
-      }))
-      .append($('<div/>',{
-        class:"answers",
-        html:answers
-      }))
-      .appendTo('#questions');
+    $('#questions')
+      .append(
+        '<div class="question">' +
+        '<div class="questionText">' + data.q + '</div>' +
+        '<div class="answers">' + answers + '</div>' +
+        '</div>'
+      );
       
-      //scroll questions
-      scrollQuestions();
-      
+    //scroll questions
+    scrollQuestions();
+    
+    //now lookup product info to preload product div
+    if(product_id){
+      $.getJSON('/api/product/' + product_id, function(data){
+        var product = data[0];
+        console.log(data);
+        $('#questions')
+          .append(
+            '<div class="question product">' +
+            '<div class="questionText">Would your friend like a ' + product.brandName + ' ' + product.productName + '?</div>' +
+            '<div class="productImage"><img src="' + product.defaultImageUrl + '" alt="' + product.brandName + ' ' + product.productName + '"></div>' +
+            '<div class="answers">' +
+            '<a href="' + product.defaultProductUrl + '" title="' + product.brandName + ' ' + product.productName + '" class="btn large primary" data-type="product">Yes!</a>' +
+            '<a class="btn large primary" data-type="question">No, ask me more questions</a>' +
+            '</div>' +
+            '</div>'
+          );
+        
+      });
+    }
+   
       
   } else {
     console.log(textStatus + ' Error retrieving question');
@@ -111,12 +128,14 @@ function questionError(jqXHR, textStatus) {
     gender = '';
     ignore = [];
     
-    $('#questions').append('<div class="question">' +
-      '<div class="questionText">Thats all the gift ideas we\'ve got.  Would you like to try again?</div>' +
-      '<div class="answers">' +
-      '<a class="btn large primary" data-next="1" >Sure, why not?</a>' +
-      '</div>'
-    );
+    $('#questions')
+      .append(
+        '<div class="question">' +
+        '<div class="questionText">Thats all the gift ideas we\'ve got.  Would you like to try again?</div>' +
+        '<div class="answers">' +
+        '<a class="btn large primary" data-next="1" >Sure, why not?</a>' +
+        '</div>'
+      );
         
     scrollQuestions();
     
