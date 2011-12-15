@@ -1,65 +1,70 @@
 var fs = require('fs')
-  , demographics
-  , questions;
-
-fs.readFile('./lib/demographics.json', function(err, data){
-  demographics = parseJSON(err, data);
+  , _ = require('underscore')
+  , demographics = require('../lib/demographics')
+  , questions = require('../lib/questions');
+  
+//Add index to questions
+questions.forEach(function(q, i) {
+	questions[i].id = i;
+	questions[i].type = 'question';
 });
-fs.readFile('./lib/questions.json', function(err, data){
-  questions = parseJSON(err, data);
-});
-exports.jsonp = function(req, res, next) {
-  var jsonp = req.query.callback;
-  if (jsonp) {
-    req.jsonp = jsonp;
-  }
-  next();
-}
-
-renderResponse = function(json, req, res) {
-  var response;
-  if(req.jsonp) {
-    res.contentType('application/x-javascript');
-    response = req.jsonp + '(' + JSON.stringify(json) + ')';
-  } else {
-    res.contentType('application/json');
-    response = JSON.stringify(json);
-  }
-  res.send(response);
-}
 
 exports.getDemographics = function(req, res) {
-  var question_id = req.params.question_id;
-  var json;
-  if(demographics[question_id]){
-    json = {
-        statusCode: 200
-        , question: demographics[question_id]
-      };
+  var question_id = req.param('question_id'),
+      question = demographics[question_id];
+
+  if (question) {
+    res.json(question);
   } else {
-    json = {
-        statusCode: 404
-        , msg: 'Question not found'
-      };
-    
-  }
-  
-  renderResponse(json, req, res);
-
-}
-
-function parseJSON(err, data) {
-  if(err) {
-    console.error("Could not open config file: ", err);
-    process.exit(1);
-  }
-  
-  try {
-    var json = JSON.parse(data);
-    return json;
-  }
-  catch(exception) {
-    console.error("There was an error parsing the json config file: ", exception);
-    process.exit(1);
+    res.json('Question not found', 404);
   }
 };
+
+exports.getQuestions = function(req, res) {
+  var missing = [];
+  [ 'gender', 'recipient' ].forEach(function(p) {
+    if (!req.query[p]) {
+      missing.push(p);
+    }
+  });
+
+  if (missing.length) {
+    return res.json('Missing parameter(s): ' + missing.join(', '), 400);
+  }
+
+  var allowed = {
+      gender: [ 'male', 'female' ]
+    , recipient: [ 'spouse', 'friend', 'parent', 'child', 'enemy' ]
+  };
+
+  var error;
+  _.keys(allowed).forEach(function(p) {
+    if (allowed[p].indexOf(req.param(p)) == -1) {
+      error = req.param(p) + ' is an unknown ' + p;
+    }
+  });
+  
+  if (error) {
+    return res.json(error, 400);
+  }
+
+  var n = questions.length
+    , ignore = req.param('ignore') ? req.param('ignore').split(',') : false
+    , possibleQuestions = ignore
+        ? _.reject(_.clone(questions), function(q, i) { return _.contains(ignore, ''+i); })
+        : _.clone(questions);
+  
+  possibleQuestions = _.reject(possibleQuestions, function(q) {
+    return (!_.contains(q.genders, req.param('gender')) ||
+           !_.contains(q.recipients, req.param('recipient')));
+  });
+
+  if (!possibleQuestions.length) {
+    res.json('No more questions', 402);
+  } else {
+    var i = Math.floor(Math.random() * possibleQuestions.length);
+    res.json(possibleQuestions[i]);
+  }
+  
+};
+
