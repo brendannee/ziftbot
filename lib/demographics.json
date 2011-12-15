@@ -1,7 +1,8 @@
 {
   "1": { 
-    "q": "Who is this gift for?",
-    "a": {
+    "type":"recipient"
+  , "q": "Who is this gift for?"
+  , "a": {
       "1": {"text":"Spouse/Significant Other", "next":2}
     , "2": {"text":"Friend", "next":3}
     , "3": {"text":"Parent", "next":4}
@@ -10,36 +11,41 @@
     }
   }
   , "2":{
-    "q": "Is your spouse/significant other male or female?",
-    "a": {
+    "type":"gender"
+  , "q": "Is your spouse/significant other male or female?"
+  , "a": {
       "1": {"text":"Male"}
     , "2": {"text":"Female"}
     }
   }
   , "3":{
-    "q": "Is your friend male or female?",
-    "a": {
+    "type":"gender"
+  , "q": "Is your friend male or female?"
+  , "a": {
       "1": {"text":"Male"}
     , "2": {"text":"Female"}
     }
   }
   , "4":{
-    "q": "Is it for your dad or your mom?",
-    "a": {
+    "type":"gender"
+  , "q": "Is it for your dad or your mom?"
+  , "a": {
       "1": {"text":"Dad"}
     , "2": {"text":"Mom"}
     }
   }
   , "5":{
-    "q": "Is it for your son or your daughter ?",
-    "a": {
+    "type":"gender"
+  , "q": "Is it for your son or your daughter ?"
+  , "a": {
       "1": {"text":"Son"}
     , "2": {"text":"Daughter"}
     }
   }
   , "6":{
-    "q": "Is your enemy male or female?",
-    "a": {
+    "type":"gender"
+  , "q": "Is your enemy male or female?"
+  , "a": {
       "1": {"text":"Male"}
     , "2": {"text":"Female"}
     }

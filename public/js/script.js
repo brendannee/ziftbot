@@ -1,9 +1,21 @@
+var recipient
+  , gender;
 
 $(document).ready(function(){
   //load first question
   $.getJSON('/api/demographics/1', displayDemographics);
 
   $('#questions').on('click', '.answers a', function(){
+    //log answer
+    switch($(this).attr('data-type')){
+      case 'recipient':
+        recipient = $(this).attr('data-value');
+        break;
+      case 'gender':
+        gender = $(this).attr('data-value');
+        break;
+    }
+    
     var next_question = $(this).attr('data-next');
     $.getJSON('/api/demographics/' + next_question, displayDemographics);
     return false;
@@ -27,7 +39,9 @@ function displayDemographics(data){
     
     for(var i in data.question.a){
       var answer = data.question.a[i];
-      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '">' + answer.text + '</a>';
+      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.question.type + '" data-value="' + i + '">' + 
+        answer.text + 
+        '</a>';
     };
     
     //Create div, add stuff then append as a question
