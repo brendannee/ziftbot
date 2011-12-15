@@ -3,7 +3,7 @@ var recipient
 
 $(document).ready(function(){
   //load first question
-  $.getJSON('/api/demographics/1', displayDemographics);
+  $.getJSON('/api/demographics/1', displayQuestions);
 
   $('#questions').on('click', '.answers a', function(){
     //log answer
@@ -17,13 +17,23 @@ $(document).ready(function(){
     }
     
     var next_question = $(this).attr('data-next');
-    $.getJSON('/api/demographics/' + next_question, displayDemographics);
+    if(next_question != 'undefined'){
+      //do next demographic question
+      $.getJSON('/api/demographics/' + next_question, displayQuestions);
+    } else {
+      //start product questions
+      $.getJSON('/api/questions', {
+        'recipient': recipient,
+        'gender': gender
+        }, displayQuestions);
+    }
+    
     return false;
   });
 
 });
 
-function displayDemographics(data){
+function displayQuestions(data){
   console.log(data);
   if(data.statusCode==200){
 

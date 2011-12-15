@@ -8,6 +8,7 @@ fs.readFile('./lib/demographics.json', function(err, data){
 fs.readFile('./lib/questions.json', function(err, data){
   questions = parseJSON(err, data);
 });
+
 exports.jsonp = function(req, res, next) {
   var jsonp = req.query.callback;
   if (jsonp) {
@@ -45,8 +46,33 @@ exports.getDemographics = function(req, res) {
   }
   
   renderResponse(json, req, res);
-
 }
+
+exports.getQuestions = function(req, res) {
+  console.log(req.query);
+  //get random question that matches our demographics
+  var question = getQuestion(req.query);
+  
+  
+  
+  var json = {
+        statusCode: 200
+        , question: question
+      };
+  
+  renderResponse(json, req, res);
+}
+
+function getQuestion(query){
+  var question_id = Math.floor(Math.random() * questions.questions.length);
+  var question = questions.questions[question_id];
+  if(question.genders.indexOf(parseInt(query.gender, 10)) != -1 && question.recipients.indexOf(parseInt(query.recipient, 10)) != -1){
+    return question;
+  } else {
+    return getQuestion(query);
+  }
+}
+
 
 function parseJSON(err, data) {
   if(err) {
