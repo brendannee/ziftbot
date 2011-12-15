@@ -1,10 +1,28 @@
 #header,
 #content,
 footer{
-  width:1024px;
+  width:800px;
   margin:0 auto;
 }
 
+#content p.lead{
+  margin-bottom: 9px;
+  color: gray;
+  text-align: center;
+  font-size:20px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+}
+
+.btn{
+  margin:0 4px;
+}
+
+.btn.multiple{
+  display:block;
+  margin:10px;
+  width:200px;
+  text-align:center;
+}
 
 footer{
   overflow:hidden;
@@ -12,7 +30,7 @@ footer{
 
 footer .left{
   float:left;
-  width:500px;
+  width:360px;
   margin-top:2px;
 }
 
@@ -20,4 +38,31 @@ footer .right{
   float:right;
   text-align:right;
   width:430px;
+}
+
+
+#questions_frame{
+  width:600px;
+  height:400px;
+  overflow:hidden;
+  margin:20px auto;
+  border:1px solid gray;
+}
+
+#questions{
+  width:100000px;
+}
+
+#questions .question{
+  width:560px;
+  height:360px;
+  overflow:hidden;
+  padding:20px;
+  float:left;
+}
+
+#questions .question .questionText{
+  font-weight:bold;
+  font-size:30px;
+  margin:0 0 18px 0;
 }
