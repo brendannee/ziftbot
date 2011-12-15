@@ -1,5 +1,5 @@
 a {
-	color: #558abe !important;
+	color: #558abe;
 }
 
 #header {
@@ -104,5 +104,4 @@ footer .right{
 .answers {
 	margin-top: 40px;
   line-height:42px;
-  margin:0 0 18px 0;
 }
