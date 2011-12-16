@@ -1,0 +1,29 @@
+template(id='question'):
+  .question
+    .questionText= q
+    .answers
+      - each answer, i in a
+        a.btn.large.primary(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+
+
+template(id='product'):
+  .question.product(id= productId)
+    .questionText Would your #{recipientType} like a #{brandName} #{productName}?
+    .productInfo= price
+    .answers
+      a.btn.large.primary.two(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Yes
+      a.btn.large.primary.two(data-type= 'question') No, ask me more questions
+
+template(id='video'):
+  .video-js-box.vim-css
+    video(id='video-' + productId, controls, width= '550', height= '306')
+      source(src=mp4, type='video/mp4')
+      - if (swf)
+        object(data=swf, type='application/x-shockwave-flash', width= '640', height= '360')
+          param(value=swf, name='movie')
+          param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
+
+template(id='image'):
+  .productImage
+    img(src= imageSrc, alt= brandName + ' ' + productName)
+

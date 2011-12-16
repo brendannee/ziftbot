@@ -6,6 +6,7 @@
       "express": "2.5.x"
     , "express-namespace": "0.0.x"
     , "jade": "0.19.x"
+    , "jadevu": "0.0.x"
     , "stylus": "0.20.x"
     , "nib": "0.3.x"
     , "underscore": "1.2.x"

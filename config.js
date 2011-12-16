@@ -2,6 +2,7 @@ var express = require('express')
   , expressNamespace = require('express-namespace')
   , stylus = require('stylus')
   , nib = require('nib')
+  , jadevu = require('jadevu')
   , Zappos = require('zappos');
   
 module.exports = function(app) {

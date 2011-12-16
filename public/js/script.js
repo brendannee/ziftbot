@@ -7,8 +7,9 @@ var recipient
   , currentVid;
 
 $(document).ready(function(){
+
   //load first question
-  $.getJSON('/api/demographics/1', displayQuestions);
+  $.getJSON('/api/demographics/1', displayQuestion);
 
   $('#questions').on('click', '.answers a', function(){
     //stop all playing videos
@@ -30,7 +31,7 @@ $(document).ready(function(){
       , next_div = $(this).parents('.question').next();
     if(next_question != 'undefined' && next_question){
       //do next demographic question
-      $.getJSON('/api/demographics/' + next_question, displayQuestions);
+      $.getJSON('/api/demographics/' + next_question, displayQuestion);
     } else if( $(this).attr('data-type') == 'product' ) {
       //show product
       return true;
@@ -57,7 +58,7 @@ $(document).ready(function(){
           , gender: gender
           , ignore: ignore.join(',')
           }
-        , success: displayQuestions
+        , success: displayQuestion
         , error: questionError
       });
     }
@@ -68,126 +69,106 @@ $(document).ready(function(){
   $('#reset').on('click', function(){
     resetQuestions($('#questions .question')[0]);
     
-    $.getJSON('/api/demographics/1', displayQuestions);
+    $.getJSON('/api/demographics/1', displayQuestion);
     return false;
   });
 
 });
 
-function displayQuestions(data, textStatus, jqXHR){
-  console.log(data);
-  if(textStatus=='success'){
-    
-    //Log question as seen
-    if(data.id != undefined){
-      ignore.push(data.id);
+function mustache(str, obj) {
+  var rex = /\{\{[^\s]+\}\}/g;
+  var matches = str.match(rex);
+  
+  if (matches) {
+    for (var i = matches.length - 1; i >= 0; i--){
+      var key = matches[i].replace(/\{\{|\}\}/g,'');
+      if (typeof(obj[key]) !== "undefined") {
+        str = str.replace(matches[i],obj[key]);
+      }
     }
-
-    //prepare answers
-    var answers = ''
-      , answerClass
-      , product_id;
-    //if two answers, display side-by-side.  If more, display in one column
-    if(Object.keys(data.a).length > 2){
-      answerClass = "multiple";
-    } else {
-      answerClass = "two";
-    }
-    
-    for(var i in data.a){
-      var answer = data.a[i];
-      answers += '<a class="btn large primary ' + answerClass + '" data-next="' + answer.next + '" data-type="' + data.type + '" data-value="' + i + '" data-product="' + answer.product + '">' + 
-        capitaliseFirstLetter(answer.text.replace(/{{pronoun}}/g, pronoun)) + 
-        '</a>';
-        if(answer.product){
-          product_id = answer.product;
-        }
-    };
-    
-    //Create div, add stuff then append as a question
-    $('#questions')
-      .append(
-        '<div class="question">' +
-        '<div class="questionText">' + data.q.replace(/{{pronoun}}/g, pronoun).replace(/{{posessiveAdjective}}/g, posessiveAdjective).replace(/{{recipientType}}/g, recipientType) + '</div>' +
-        '<div class="answers">' + answers + '</div>' +
-        '</div>'
-      );
-      
-    //scroll questions
-    scrollQuestions();
-    
-    //now lookup product info to preload product div
-    if(product_id){
-      $.getJSON('/api/product/' + product_id, function(data){
-        var product = data[0]
-          , style = product.styles[0]
-          , video = {}
-          , media;
-        console.log(data);
-        
-        $.each(product.videos, function(i, value){
-          if(value.videoEncodingExtension == 'mp4'){
-            video.mp4 = value.filename;
-          } else if(value.videoEncodingExtension == 'flv'){
-            video.flv = value.filename;
-          }
-        });
-        console.log(video);
-        if(video.mp4){
-          media = '<div class="video-js-box vim-css">' +
-                  '<video id="video-' + product.productId + '" width="550" height="306" controls>' +
-                    '<source src="' + video.mp4 + '"  type="video/mp4" />' +
-                    '<object width="640" height="360" type="application/x-shockwave-flash" data="' + video.swf + '">' + 
-                      '<param name="movie" value="' + video.swf + '" />' +
-                      '<param name="flashvars" value="autostart=true&amp;controlbar=over&amp;image=' + style.imageUrl + '&amp;file=' + video.mp4 + '" />' +
-                    '</object>' +
-                  '</video>' +
-                  '</div>';
-        } else {
-          media = '<div class="productImage">' +
-            '<img src="' + style.imageUrl + '" alt="' + product.brandName + ' ' + product.productName + '">' +
-            '</div>';
-        }
-
-        
-        $('#questions')
-          .append(
-            '<div class="question product" id="' + product.productId + '">' +
-            '<div class="questionText">Would your ' + recipientType + ' like a ' + product.brandName + ' ' + product.productName + '?</div>' +
-            media +
-            '<div class="productInfo">' + style.price + '</div>' +
-            '<div class="answers">' +
-            '<a href="' + product.defaultProductUrl + '" title="' + product.brandName + ' ' + product.productName + '" class="btn large primary two" data-type="product">Yes!</a>' +
-            '<a class="btn large primary two" data-type="question">No, ask me more questions</a>' +
-            '</div>' +
-            '</div>'
-          );
-          
-        //render video, if present
-        if(video.mp4){
-          currentVid = VideoJS.setup('video-' + product.productId);
-        }
-        
-      });
-    }
-   
-      
-  } else {
-    console.log(textStatus + ' Error retrieving question');
   }
-};
+  return str;
+}
+
+function displayQuestion(question) {
+  console.log(question);
+  
+  // Log question as seen
+  if (question.id) {
+    ignore.push(question.id);
+  }
+  
+  // Replace text with proper wording
+  question.q = mustache(question.q, {
+      pronoun: pronoun
+    , posessiveAdjective: posessiveAdjective
+    , recipientType: recipientType
+  });
+
+  $.each(question.a, function(i, answer) {
+    answer.text = mustache(answer.text, {
+        pronoun: pronoun
+    });
+  });
+
+  template('question', question).appendTo('#questions');
+
+  //scroll questions
+  scrollQuestions();
+
+  if (question.product) {
+    console.log(question.product);
+    $.getJSON('/api/product/' + question.product, displayProduct);
+  }
+
+}
+
+function displayProduct(product) {
+  var product = product[0]
+    , $product
+    , $media;
+
+  product.recipientType = recipientType;
+  product.price = product.styles[0].price;
+  product.imageSrc = product.styles[0].imageUrl;
+  product.swf = 
+  
+  $.each(product.videos, function(i, value) {
+    if (value.videoEncodingExtension == 'mp4') {
+      product.mp4 = value.filename;
+    } else if (value.videoEncodingExtension == 'flv') {
+      product.flv = value.filename;
+    }
+  });
+
+  console.log(product);
+
+  if (product.mp4) {
+    $media = template('video', product);
+  } else {
+    $media = template('image', product);
+  }
+
+  $product = template('product', product);
+  $product.find('.questionText').after($media);
+  $product.appendTo('#questions');
+  
+  // Render video, if present
+  if (product.mp4) {
+    currentVid = VideoJS.setup('video-' + product.productId);
+  }
+  
+}
 
 function questionError(jqXHR, textStatus) {
-  if(jqXHR.status == 402){
-    $('#questions')
-      .append(
-        '<div class="question">' +
-        '<div class="questionText">We\'re out of ideas.  Would you like to try Ziftbot again?</div>' +
-        '<div class="answers">' +
-        '<a class="btn large primary" data-next="1" data-type="reset" >Yes</a>' +
-        '</div>'
-      );
-        
+  if (jqXHR.status == 402) {
+    var error = {
+        q: 'We\'re out of ideas.  Would you like to try ZiftBot again?'
+      , a: [{ next: 1, text: 'Yes' }]
+      , type: 'reset'
+    };
+
+    template('question', error).appendTo('#questions');
     scrollQuestions();
     
   } else {
