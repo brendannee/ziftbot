@@ -3,7 +3,11 @@ template(id='question'):
     .questionText= q
     .answers
       - each answer, i in a
-        a.btn.large.primary(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+        - if (a.length > 2)
+          a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+        - else
+          a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+  
 
 
 template(id='product'):
