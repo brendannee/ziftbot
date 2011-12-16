@@ -149,30 +149,25 @@ function displayQuestion(question) {
 }
 
 function renderProduct(product) {
+  console.log(product);
+
   var product = product[0]
     , $product
     , $media;
 
   product.recipientType = recipientType;
-  product.price = product.styles[0].price;
-  product.imageSrc = product.styles[0].imageUrl;
-  product.swf = 
+  product.price = (product.styles.length) ? product.styles[0].price : '';
+  product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
   
   $.each(product.videos, function(i, value) {
     if (value.videoEncodingExtension == 'mp4') {
       product.mp4 = value.filename;
     } else if (value.videoEncodingExtension == 'flv') {
-      product.flv = value.filename;
+      product.swf = value.filename;
     }
   });
 
-  console.log(product);
-
-  if (product.mp4) {
-    $media = template('video', product);
-  } else {
-    $media = template('image', product);
-  }
+  $media = (product.mp4) ? template('video', product) : template('image', product);
 
   $product = template('product', product);
   $product.find('.questionText').after($media);

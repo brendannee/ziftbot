@@ -34,7 +34,10 @@ template(id='video'):
       - if (swf)
         object(data=swf, type='application/x-shockwave-flash', width= '640', height= '360')
           param(value=swf, name='movie')
-          param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
+          - if (imageSrc)
+            param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
+          - else
+            param(value='autostart=true&amp;controlbar=over&amp;file=\'' + mp4 + '\'')
 
 template(id='image'):
   .productImage
