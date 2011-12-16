@@ -1,27 +1,27 @@
 !!! 5
 html
   head
-    link(rel: 'shortcut icon', href: '/favicon.ico')
-    title= typeof(title) !== 'undefined' ? title : "ZiftBot"
+    //link(rel='shortcut icon', href:'/favicon.ico')
+    title= typeof(title) !== 'undefined' ? title : 'ZiftBot'
     script(src='js/libs/modernizr-2.0.6.min.js')
-    link(rel='stylesheet', href='css/style.css')
-    link(rel='stylesheet', href='css/video-js.css')
+    link(rel='stylesheet', href='/css/style.css')
+    link(rel='stylesheet', href='/css/video-js.css')
   body
     #wrap
       #header
-        img(src="images/ziftbot.png", class="logo")
+        img.logo(src='images/ziftbot.png')
         p.lead Find the perfect Zappos gift by answering a few simple questions.
       #content!= body
       footer
         .left By 
-          a(href="http://twitter.com/trucy") Trucy Phan
+          a(href='http://twitter.com/trucy') Trucy Phan
           |  and 
-          a(href="http://twitter.com/brendannee") Brendan Nee
+          a(href='http://twitter.com/brendannee') Brendan Nee
           |  and 
-          a(href="http://twitter.com/cpetzold") Conner Petzold
+          a(href='http://twitter.com/cpetzold') Conner Petzold
           br
           |  for
-          a(href="http://developer.zappos.com/blog/gifting-zappos-api-hackathon-hack-long-contest") Zappos API Hackathon
+          a(href='http://developer.zappos.com/blog/gifting-zappos-api-hackathon-hack-long-contest') Zappos API Hackathon
         .right.
           <!-- AddThis Button BEGIN -->
           <div class="addthis_toolbox addthis_default_style ">
