@@ -239,6 +239,9 @@ function logDemographics(type, value) {
         case 'parent':
           recipientType = (gender == 'male') ? 'dad' : 'mom';
           break;
+        case 'sibling':
+          recipientType = (gender == 'male') ? 'brother' : 'sister';
+          break;
         case 'child':
           recipientType = (gender == 'male') ? 'son' : 'daughter';
           break;

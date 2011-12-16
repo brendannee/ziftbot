@@ -20,6 +20,8 @@ module.exports = function routes(app){
     app.get('/questions', api.getQuestions);
   
     app.get('/product/:product_id', api.getProduct);
+    
+    app.get('/mail/send', api.sendMail);
   });
 
 
