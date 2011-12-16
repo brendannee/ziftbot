@@ -12,75 +12,10 @@ $(document).ready(function(){
   if(document.location.pathname.split('/')[1] == 'product'){
     $.getJSON('/api/product/' + document.location.pathname.split('/')[2], renderProduct);
   } else {
-    $.getJSON('/api/demographics/1', displayQuestion);
+    nextScreen();
   }
-  
 
-  $('#questions').on('click', '.answers a', function(){
-    //stop all playing videos
-    try{
-      currentVid.pause();
-    }
-    catch(e){
-    }
-    
-    //log answer
-    logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
-    
-    //if reset, then clear all old variables and divs
-    if( $(this).attr('data-type') == 'reset' ) {
-      resetQuestions($(this).parents('.question')[0]);
-    }
-    
-    var next_question = $(this).attr('data-next')
-      , next_div = $(this).parents('.question').next();
-    if(next_question != 'undefined' && next_question){
-      //do next demographic question
-      $.getJSON('/api/demographics/' + next_question, displayQuestion);
-    } else if( $(this).attr('data-type') == 'product' ) {
-      //show product
-      return true;
-      
-    } else if( $(this).attr('data-value') == 'yes' ) {
-      //product page is pre-rendered, update history
-      if ( Modernizr.history ) {
-        productID = $(this).attr('data-product');
-        history.pushState({ productID: productID}, productID, 'product/' + productID)
-      }
-      
-      scrollQuestions();
-      
-      //render videoJS and start video, if the next question contains a video
-      if($('video', next_div).length){
-        currentVid.play();
-      }
-    } else {
-      //do product questions
-      
-      //remove pre-rendered product in next sibling div
-      next_div.remove();
-      
-      //remove history
-      if ( Modernizr.history ) {
-        history.pushState({}, 'Ziftbot', '/');
-      }
-      
-      
-      $.ajax({
-          url: '/api/questions'
-        , dataType: 'json'
-        , data: {
-            recipient: recipient
-          , gender: gender
-          , ignore: ignore.join(',')
-          }
-        , success: displayQuestion
-        , error: questionError
-      });
-    }
-    
-    return false;
-  });
+  $('#questions').on('click', '.answers a', nextScreen);
   
   $('#reset').on('click', function(){
     resetQuestions($('#questions .question')[0]);
@@ -90,6 +25,76 @@ $(document).ready(function(){
   });
 
 });
+
+function nextScreen(){
+  //stop all playing videos
+  try{
+    currentVid.pause();
+  }
+  catch(e){
+  }
+    
+  //log answer
+  logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
+    
+  //if reset, then clear all old variables and divs
+  if( $(this).attr('data-type') == 'reset' ) {
+    resetQuestions($(this).parents('.question')[0]);
+  }
+  
+  //remove history
+  if ( Modernizr.history ) {
+    history.pushState({}, 'Ziftbot', '/');
+  }
+    
+  var next_question = $(this).attr('data-next')
+    , next_div = $(this).parents('.question').next();
+    
+  if(!gender && !recipient){
+    //start demographic questions
+    $.getJSON('/api/demographics/1', displayQuestion);
+    
+  } else if(next_question != 'undefined' && next_question) {
+    //do next demographic question
+    $.getJSON('/api/demographics/' + next_question, displayQuestion);
+  } else if( $(this).attr('data-type') == 'product' ) {
+    //show product
+    return true;
+      
+  } else if( $(this).attr('data-value') == 'yes' ) {
+    //product page is pre-rendered, update history and scroll question
+    if ( Modernizr.history ) {
+      productID = $(this).attr('data-product');
+      history.pushState({ productID: productID}, productID, 'product/' + productID)
+    }
+    scrollQuestions();
+      
+    //render videoJS and start video, if the next question contains a video
+    if($('video', next_div).length){
+      currentVid.play();
+    }
+  } else {
+    //do product questions
+      
+    //remove pre-rendered product in next sibling div
+    next_div.remove();
+      
+    $.ajax({
+        url: '/api/questions'
+      , dataType: 'json'
+      , data: {
+          recipient: recipient
+        , gender: gender
+        , ignore: ignore.join(',')
+        }
+      , success: displayQuestion
+      , error: questionError
+    });
+  }
+    
+  return false;
+  
+}
 
 function mustache(str, obj) {
   var rex = /\{\{[^\s]+\}\}/g;

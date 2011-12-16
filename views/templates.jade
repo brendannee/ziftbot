@@ -4,22 +4,24 @@ template(id='question'):
     .answers
       - each answer, i in a
         - if (Object.keys(a).length < 3)
-          - if (product)
-            a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
-          - else
-            a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i)= answer.text
+          a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
         - else
-          - if (product)
-            a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
-          - else
-            a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i)= answer.text
+          a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
           
   
-
-
 template(id='product'):
   .question.product(id= productId)
-    .questionText Would your #{recipientType} like a #{brandName} #{productName}?
+    - if (brandName.charAt(0) == 'A')
+      article = 'an'
+    - else
+      article = 'a'
+    - if (!recipientType)
+      phrase = 'Would they like ' + article + ' '
+    - else
+      phrase = 'Would your ' + recipientType + ' like ' + article + ' '
+    .questionText
+       span.phrase= phrase
+       span.productName #{brandName} #{productName}?
     .productInfo= price
     .answers
       a.btn.large.primary.two(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Yes
