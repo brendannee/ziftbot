@@ -77,9 +77,13 @@ body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:
   text-align: center;
 }
 
-#header .logo {
-  margin: 30px auto 15px auto;
+#header h1.logo a {
+  display:block;
+  margin: 20px auto 15px auto;
+  height: 70px;
   width: 300px;
+  text-indent:-9999px;
+  background:url(../images/ziftbot.png) 0 0 no-repeat;
 }
 
 #header,
@@ -102,7 +106,7 @@ footer{
 
 #reset {
   position:absolute;
-  top:0;
+  bottom:0;
   right:5px;
 }
 
