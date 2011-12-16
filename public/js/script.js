@@ -8,8 +8,13 @@ var recipient
 
 $(document).ready(function(){
 
-  //load first question
-  $.getJSON('/api/demographics/1', displayQuestion);
+  //load first question, unless URL has product ID
+  if(document.location.pathname.split('/')[1] == 'product'){
+    $.getJSON('/api/product/' + document.location.pathname.split('/')[2], renderProduct);
+  } else {
+    $.getJSON('/api/demographics/1', displayQuestion);
+  }
+  
 
   $('#questions').on('click', '.answers a', function(){
     //stop all playing videos
@@ -37,7 +42,12 @@ $(document).ready(function(){
       return true;
       
     } else if( $(this).attr('data-value') == 'yes' ) {
-      //product page is pre-rendered
+      //product page is pre-rendered, update history
+      if ( Modernizr.history ) {
+        productID = $(this).attr('data-product');
+        history.pushState({ productID: productID}, productID, 'product/' + productID)
+      }
+      
       scrollQuestions();
       
       //render videoJS and start video, if the next question contains a video
@@ -49,6 +59,12 @@ $(document).ready(function(){
       
       //remove pre-rendered product in next sibling div
       next_div.remove();
+      
+      //remove history
+      if ( Modernizr.history ) {
+        history.pushState({}, 'Ziftbot', '/');
+      }
+      
       
       $.ajax({
           url: '/api/questions'
@@ -110,6 +126,10 @@ function displayQuestion(question) {
         pronoun: pronoun
     });
   });
+  
+  if ( !question.product ) {
+    question.product = null;
+  }
 
   template('question', question).appendTo('#questions');
 
@@ -118,12 +138,12 @@ function displayQuestion(question) {
 
   if (question.product) {
     console.log(question.product);
-    $.getJSON('/api/product/' + question.product, displayProduct);
+    $.getJSON('/api/product/' + question.product, renderProduct);
   }
 
 }
 
-function displayProduct(product) {
+function renderProduct(product) {
   var product = product[0]
     , $product
     , $media;
@@ -156,6 +176,11 @@ function displayProduct(product) {
   // Render video, if present
   if (product.mp4) {
     currentVid = VideoJS.setup('video-' + product.productId);
+  }
+  
+  //if we're on a product page, scroll questions
+  if(document.location.pathname.split('/')[1] == 'product'){
+    scrollQuestions();
   }
   
 }

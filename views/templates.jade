@@ -4,9 +4,16 @@ template(id='question'):
     .answers
       - each answer, i in a
         - if (a.length > 2)
-          a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+          - if (product)
+            a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+          - else
+            a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i)= answer.text
         - else
-          a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
+          - if (product)
+            a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+          - else
+            a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i)= answer.text
+          
   
 
 
