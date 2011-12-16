@@ -147,7 +147,7 @@ footer .right{
 
 #questionsFrame{
   width:600px;
-  height:600px;
+  height:550px;
   overflow:hidden;
   margin:20px auto;
 }
@@ -158,7 +158,7 @@ footer .right{
 
 #questions .question{
   width:560px;
-  height:560px;
+  height:510px;
   overflow:hidden;
   padding:20px;
   float:left;
