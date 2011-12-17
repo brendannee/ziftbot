@@ -240,9 +240,6 @@ function logDemographics(type, value) {
   switch(type){
     case 'recipient':
       recipient = value;
-      //update template
-      $('.recipientBox .recipient').html(recipient);
-      
       break;
     case 'gender':
       gender = value;
@@ -269,7 +266,7 @@ function logDemographics(type, value) {
           break;
       }
       //update template
-      $('.recipientBox .recipient').html(recipientType);
+      $('#recipientBox .recipient').html(recipientType);
       
       break;
   }
