@@ -77,9 +77,13 @@ body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:
   text-align: center;
 }
 
-#header a img.logo {
-  margin: 30px auto 15px auto;
+#header h1.logo a {
+  display:block;
+  margin: 20px auto 15px auto;
+  height: 70px;
   width: 300px;
+  text-indent:-9999px;
+  background:url(../images/ziftbot.png) 0 0 no-repeat;
 }
 
 #header,
@@ -91,6 +95,7 @@ footer{
 
 #content{
   position:relative;
+  border-top: 1px solid #f1f1f1;
 }
 
 #content p.lead{
@@ -101,9 +106,7 @@ footer{
 }
 
 #reset {
-  position:absolute;
-  top:0;
-  right:5px;
+  text-decoration:underline;
 }
 
 .btn{margin:0 4px;cursor:pointer;display:inline-block;background-color:#e6e6e6;background-repeat:no-repeat;background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6));background-image:-webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);background-image:-moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6);background-image:-ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);background-image:-o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);background-image:linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);padding:5px 14px 6px;text-shadow:0 1px 1px rgba(255, 255, 255, 0.75);color:#333;font-size:13px;line-height:normal;border:1px solid #ccc;border-bottom-color:#bbb;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;-webkit-box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);-moz-box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);-webkit-transition:0.1s linear all;-moz-transition:0.1s linear all;transition:0.1s linear all;}.btn:hover{background-position:0 -15px;color:#333;text-decoration:none;}
@@ -148,6 +151,8 @@ a.no:hover{background: #b6cde3;border: 1px solid #ccc;}
 
 footer{
   overflow:hidden;
+  border-top: 1px solid #F1F1F1;
+  padding-top: 10px;
 }
 
 footer .left{
@@ -164,10 +169,10 @@ footer .right{
 
 
 #questionsFrame{
-  width:600px;
-  height:600px;
-  overflow:hidden;
-  margin:20px auto;
+  width: 600px;
+  height: 550px;
+  overflow: hidden;
+  margin: 10px auto 20px auto;
 }
 
 #questions{
@@ -176,7 +181,7 @@ footer .right{
 
 #questions .question{
   width:560px;
-  height:560px;
+  height:510px;
   overflow:hidden;
   padding:20px;
   float:left;
@@ -198,13 +203,16 @@ footer .right{
 }
 
 .answers {
-  margin-top: 40px;
+  margin-top: 30px;
   line-height:42px;
 }
 #reset {
-	background: url(/images/z.png) no-repeat 0 0;
-	width: 34px;
-	height: 39px;
-	padding-top: 40px;
-	line-height: 14px;
+  background: url(/images/reset.png) no-repeat 30px 10px #F1F1F1;
+	width: 74px;
+  border: 1px solid #ccc;
+	float: left;
+  text-align:center;
+  padding-top: 20px;
+  margin-right: 10px;
+  text-decoration: none;
 }

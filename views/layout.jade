@@ -1,16 +1,16 @@
 !!! 5
 html
   head
-    //link(rel='shortcut icon', href:'/favicon.ico')
+    link(rel='shortcut icon', href:'/favicon.ico')
     title= typeof(title) !== 'undefined' ? title : 'ZiftBot'
-    script(src='js/libs/modernizr-2.0.6.min.js')
+    script(src='/js/libs/modernizr-2.0.6.min.js')
     link(rel='stylesheet', href='/css/style.css')
     link(rel='stylesheet', href='/css/video-js.css')
   body
     #wrap
       #header
-        a(href='http://ziftbot.com')
-          img.logo(src='images/ziftbot.png')
+        h1.logo
+          a.logo(href='/', title='Ziftbot Home') Ziftbot
         p.lead Find the perfect Zappos gift by answering a few simple questions.
       #content!= body
       footer
@@ -26,21 +26,22 @@ html
         .right.
           <!-- AddThis Button BEGIN -->
           <div class="addthis_toolbox addthis_default_style ">
+          <a class="addthis_button_twitter_follow_native" tf:screen_name="ziftbot" tw:show-count="false" tw:width="65px" style="padding-right:20px" ></a>
           <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
-          <a class="addthis_button_tweet" tw:via="ziftbot" tw:text="Zappos Gift Bot - find wacky gifts"></a>
+          <a class="addthis_button_tweet" tw:via="ziftbot" tw:text="Ziftbot - find wacky gifts from Zappos"></a>
           <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
           </div>
-          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=xefiro"></script>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js"></script>
           <!-- AddThis Button END -->
           
           
     != partial('templates')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
     script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js')
-    script(src='js/libs/video.js')
+    script(src='/js/libs/video.js')
     
-    script(src='js/plugins.js')
-    script(src='js/script.js')
+    script(src='/js/plugins.js')
+    script(src='/js/script.js')
     
     // Google Analytics
     script.

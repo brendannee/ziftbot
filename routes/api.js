@@ -1,7 +1,8 @@
 var fs = require('fs')
   , _ = require('underscore')
   , demographics = require('../lib/demographics')
-  , questions = require('../lib/questions');
+  , questions = require('../lib/questions')
+  , email = require('mailer');
   
 //Add index to questions
 questions.forEach(function(q, i) {
@@ -37,7 +38,7 @@ module.exports = function routes(app){
 
       var allowed = {
           gender: [ 'male', 'female' ]
-        , recipient: [ 'spouse', 'friend', 'parent', 'child', 'enemy' ]
+        , recipient: [ 'spouse', 'friend', 'parent', 'sibling', 'child', 'enemy' ]
       };
 
       var error;
@@ -77,6 +78,29 @@ module.exports = function routes(app){
         function(err, data){
           res.json(err || data);
         });
+    },
+    
+    sendMail: function(req, res) {
+      var sgusername = 'sendgrid_username';
+      var sgpassword = 'sendgrid_password';
+      email.send({
+          host : "smtp.sendgrid.net",
+          port : "587",
+          domain : "ziftbot.com",
+          to : "recipient@domain.com",
+          from : "yourname@yourdomain.com",
+          subject : "This is a subject",
+          body: "Hello, this is a test body",
+          authentication : "login",
+          username : sgusername,
+          password : sgpassword
+        },
+        function(err, result){
+          if(err){
+            console.log(err);
+          }
+        });
+      
     }
   }
 }

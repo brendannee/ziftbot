@@ -8,63 +8,14 @@ var recipient
 
 $(document).ready(function(){
 
-  //load first question
-  $.getJSON('/api/demographics/1', displayQuestion);
+  //load first question, unless URL has product ID
+  if(document.location.pathname.split('/')[1] == 'product'){
+    $.getJSON('/api/product/' + document.location.pathname.split('/')[2], renderProduct);
+  } else {
+    nextScreen();
+  }
 
-  $('#questions').on('click', '.answers a', function(){
-    //stop all playing videos
-    try{
-      currentVid.pause();
-    }
-    catch(e){
-    }
-    
-    //log answer
-    logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
-    
-    //if reset, then clear all old variables and divs
-    if( $(this).attr('data-type') == 'reset' ) {
-      resetQuestions($(this).parents('.question')[0]);
-    }
-    
-    var next_question = $(this).attr('data-next')
-      , next_div = $(this).parents('.question').next();
-    if(next_question != 'undefined' && next_question){
-      //do next demographic question
-      $.getJSON('/api/demographics/' + next_question, displayQuestion);
-    } else if( $(this).attr('data-type') == 'product' ) {
-      //show product
-      return true;
-      
-    } else if( $(this).attr('data-value') == 'yes' ) {
-      //product page is pre-rendered
-      scrollQuestions();
-      
-      //render videoJS and start video, if the next question contains a video
-      if($('video', next_div).length){
-        currentVid.play();
-      }
-    } else {
-      //do product questions
-      
-      //remove pre-rendered product in next sibling div
-      next_div.remove();
-      
-      $.ajax({
-          url: '/api/questions'
-        , dataType: 'json'
-        , data: {
-            recipient: recipient
-          , gender: gender
-          , ignore: ignore.join(',')
-          }
-        , success: displayQuestion
-        , error: questionError
-      });
-    }
-    
-    return false;
-  });
+  $('#questions').on('click', '.answers a', nextScreen);
   
   $('#reset').on('click', function(){
     resetQuestions($('#questions .question')[0]);
@@ -74,6 +25,76 @@ $(document).ready(function(){
   });
 
 });
+
+function nextScreen(){
+  //stop all playing videos
+  try{
+    currentVid.pause();
+  }
+  catch(e){
+  }
+    
+  //log answer
+  logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
+    
+  //if reset, then clear all old variables and divs
+  if( $(this).attr('data-type') == 'reset' ) {
+    resetQuestions($(this).parents('.question')[0]);
+  }
+  
+  //remove history
+  if ( Modernizr.history ) {
+    history.pushState({}, 'Ziftbot', '/');
+  }
+    
+  var next_question = $(this).attr('data-next')
+    , next_div = $(this).parents('.question').next();
+    
+  if(!gender && !recipient){
+    //start demographic questions
+    $.getJSON('/api/demographics/1', displayQuestion);
+    
+  } else if(next_question != 'undefined' && next_question) {
+    //do next demographic question
+    $.getJSON('/api/demographics/' + next_question, displayQuestion);
+  } else if( $(this).attr('data-type') == 'product' ) {
+    //show product
+    return true;
+      
+  } else if( $(this).attr('data-value') == 'yes' ) {
+    //product page is pre-rendered, update history and scroll question
+    if ( Modernizr.history ) {
+      productID = $(this).attr('data-product');
+      history.pushState({ productID: productID}, productID, 'product/' + productID)
+    }
+    scrollQuestions();
+      
+    //render videoJS and start video, if the next question contains a video
+    if($('video', next_div).length){
+      currentVid.play();
+    }
+  } else {
+    //do product questions
+      
+    //remove pre-rendered product in next sibling div
+    next_div.remove();
+      
+    $.ajax({
+        url: '/api/questions'
+      , dataType: 'json'
+      , data: {
+          recipient: recipient
+        , gender: gender
+        , ignore: ignore.join(',')
+        }
+      , success: displayQuestion
+      , error: questionError
+    });
+  }
+    
+  return false;
+  
+}
 
 function mustache(str, obj) {
   var rex = /\{\{[^\s]+\}\}/g;
@@ -110,6 +131,10 @@ function displayQuestion(question) {
         pronoun: pronoun
     });
   });
+  
+  if ( !question.product ) {
+    question.product = null;
+  }
 
   template('question', question).appendTo('#questions');
 
@@ -118,36 +143,31 @@ function displayQuestion(question) {
 
   if (question.product) {
     console.log(question.product);
-    $.getJSON('/api/product/' + question.product, displayProduct);
+    $.getJSON('/api/product/' + question.product, renderProduct);
   }
 
 }
 
-function displayProduct(product) {
+function renderProduct(product) {
+  console.log(product);
+
   var product = product[0]
     , $product
     , $media;
 
   product.recipientType = recipientType;
-  product.price = product.styles[0].price;
-  product.imageSrc = product.styles[0].imageUrl;
-  product.swf = 
+  product.price = (product.styles.length) ? product.styles[0].price : '';
+  product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
   
   $.each(product.videos, function(i, value) {
     if (value.videoEncodingExtension == 'mp4') {
       product.mp4 = value.filename;
     } else if (value.videoEncodingExtension == 'flv') {
-      product.flv = value.filename;
+      product.swf = value.filename;
     }
   });
 
-  console.log(product);
-
-  if (product.mp4) {
-    $media = template('video', product);
-  } else {
-    $media = template('image', product);
-  }
+  $media = (product.mp4) ? template('video', product) : template('image', product);
 
   $product = template('product', product);
   $product.find('.questionText').after($media);
@@ -156,6 +176,11 @@ function displayProduct(product) {
   // Render video, if present
   if (product.mp4) {
     currentVid = VideoJS.setup('video-' + product.productId);
+  }
+  
+  //if we're on a product page, scroll questions
+  if(document.location.pathname.split('/')[1] == 'product'){
+    scrollQuestions();
   }
   
 }
@@ -213,6 +238,9 @@ function logDemographics(type, value) {
           break;
         case 'parent':
           recipientType = (gender == 'male') ? 'dad' : 'mom';
+          break;
+        case 'sibling':
+          recipientType = (gender == 'male') ? 'brother' : 'sister';
           break;
         case 'child':
           recipientType = (gender == 'male') ? 'son' : 'daughter';

@@ -3,17 +3,31 @@ template(id='question'):
     .questionText= q
     .answers
       - each answer, i in a
-        a.btn.large.primary(data-next= answer.next, data-type= type, data-value= i, data-product= answer.product)= answer.text
-
-
+        - if (Object.keys(a).length < 3)
+          a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+        - else
+          a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+  
+  
 template(id='product'):
   .question.product(id= productId)
-    .questionText My #{recipientType} would love a #{brandName} #{productName}.
+    - if (brandName.charAt(0) == 'A')
+      article = 'an'
+    - else
+      article = 'a'
+    - if (!recipientType)
+      phrase = 'They would love ' + article + ' '
+    - else
+      phrase = 'My ' + recipientType + ' would love ' + article + ' '
+    .questionText
+       span.phrase= phrase
+       span.productName #{brandName} #{productName}.
     .productInfo= price
     .answers
-      a.no(data-type= 'question') Moar questions
+      a(href="#", id="reset") Start Over
+      a.no(data-type= 'question') Next Question
       a.yes(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
-
+      
 template(id='video'):
   .video-js-box.vim-css
     video(id='video-' + productId, controls, width= '550', height= '306')
@@ -21,7 +35,10 @@ template(id='video'):
       - if (swf)
         object(data=swf, type='application/x-shockwave-flash', width= '640', height= '360')
           param(value=swf, name='movie')
-          param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
+          - if (imageSrc)
+            param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
+          - else
+            param(value='autostart=true&amp;controlbar=over&amp;file=\'' + mp4 + '\'')
 
 template(id='image'):
   .productImage
