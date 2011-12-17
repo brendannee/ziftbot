@@ -82,7 +82,7 @@ module.exports = function routes(app){
     
     sendProduct: function(req, res) {
       var missing = [];
-      [ 'to', 'firstName', 'lastName', 'product_id' ].forEach(function(p) {
+      [ 'to', 'sender', 'firstName', 'lastName', 'product_id' ].forEach(function(p) {
         if (!req.query[p]) {
           missing.push(p);
         }
@@ -100,18 +100,26 @@ module.exports = function routes(app){
             res.json(err);
           } else {
             var subject = req.param('firstName') + ' thinks you should check out ' + data[0].brandName + ' ' + data[0].productName;
-            var body = 'I was browsing <a href="http://zitbot.com">ZiftBot</a> and found ' + data[0].brandName + ' ' + data[0].productName;
-              ' - I thought you might be interesting in this.';
-            body += req.param('message') || '';
-            body += '<h2>' + data[0].brandName + ' ' + data[0].productName + '</h2>'
-            if(data[0].styles.length){
-              body += '<img src="' + data[0].styles[0].imageUrl + '">' +
-                data[0].styles[0].originalPrice + '<br>';
+            var html = 'I was browsing <a href="http://zitbot.com">ZiftBot</a> and found ' 
+              + data[0].brandName + ' ' + data[0].productName + ' - I thought you might like it.\n';
+            var body = 'I was browsing http://zitbot.com and found '
+              + data[0].brandName + ' ' + data[0].productName + ' - I thought you might like it.\n';
+            if(req.param('message')) {
+               html += '<p>' + req.param('message') + '</p>';
+               body += req.param('message') + '\n\n';
             }
-            body += '<p>' + data[0].description + ' </p>';
-              '<a href="' + data[0].defaultProductUrl + '">View product details</a>';
-            
-            body += req.param('message') || '';
+
+            html += '<h2><a href="' + data[0].defaultProductUrl + '">' + data[0].brandName + ' ' + data[0].productName + '</a></h2>'
+            body += data[0].brandName + ' ' + data[0].productName + '\n\n'
+            if(data[0].styles.length){
+              html += '<a href="' + data[0].defaultProductUrl + '"><img src="' + data[0].styles[0].imageUrl + '"></a><br>' +
+                '<strong>' + data[0].styles[0].originalPrice + '<strong><br>';
+              body += data[0].styles[0].originalPrice + '\n';
+            }
+            html += '<p>' + data[0].description + ' </p><a href="' + data[0].defaultProductUrl + '">View product on Zappos.com</a>' +
+              '<hr>This message from sent to you from Ziftbot.com on behalf of ' + req.param('sender') + '.';
+            body += data[0].description + '\n Product URL: ' + data[0].defaultProductUrl +
+              'This message from sent to you from Ziftbot.com on behalf of ' + req.param('sender') + '.';
             
             var sgusername = 'blinktag';
             var sgpassword = process.env.SENDGRID_PW;
@@ -126,6 +134,7 @@ module.exports = function routes(app){
               from : "noreply@ziftbot.com",
               subject : subject,
               body: body,
+              html: html,
               authentication : "login",
               username : sgusername,
               password : sgpassword
