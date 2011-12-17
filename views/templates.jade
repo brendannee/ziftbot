@@ -7,7 +7,7 @@ template(id='question'):
           a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
         - else
           a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
-          
+  
   
 template(id='product'):
   .question.product(id= productId)
@@ -16,17 +16,18 @@ template(id='product'):
     - else
       article = 'a'
     - if (!recipientType)
-      phrase = 'Would they like ' + article + ' '
+      phrase = 'They would love ' + article + ' '
     - else
-      phrase = 'Would your ' + recipientType + ' like ' + article + ' '
+      phrase = 'My ' + recipientType + ' would love ' + article + ' '
     .questionText
        span.phrase= phrase
-       span.productName #{brandName} #{productName}?
+       span.productName #{brandName} #{productName}.
     .productInfo= price
     .answers
-      a.btn.large.primary.two(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Yes
-      a.btn.large.primary.two(data-type= 'question') No, ask me more questions
-
+      a(href="#", id="reset") Start Over
+      a.no(data-type= 'question') Next Question
+      a.yes(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
+      
 template(id='video'):
   .video-js-box.vim-css
     video(id='video-' + productId, controls, width= '550', height= '306')

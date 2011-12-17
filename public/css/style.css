@@ -95,6 +95,7 @@ footer{
 
 #content{
   position:relative;
+  border-top: 1px solid #f1f1f1;
 }
 
 #content p.lead{
@@ -105,9 +106,6 @@ footer{
 }
 
 #reset {
-  position:absolute;
-  bottom:0;
-  right:5px;
   text-decoration:underline;
 }
 
@@ -117,6 +115,24 @@ footer{
 .btn.disabled{cursor:default;background-image:none;filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);filter:alpha(opacity=65);-khtml-opacity:0.65;-moz-opacity:0.65;opacity:0.65;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none;}
 .btn[disabled]{cursor:default;background-image:none;filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);filter:alpha(opacity=65);-khtml-opacity:0.65;-moz-opacity:0.65;opacity:0.65;-webkit-box-shadow:none;-moz-box-shadow:none;box-shadow:none;}
 .btn.large{margin: 20px auto;font-size:16px;line-height:normal;padding:9px 14px 9px;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;}
+a.yes,a.no {
+	font-size: 30px;
+	font-weight: 700;
+	color: #14172a;
+	padding: 10px 15px;
+	float: left;
+}
+a.yes{
+	background: url(/images/tag.png) no-repeat 0 0; 
+	margin-left: 5px; 
+	width: 174px; 
+	display: block;
+	text-align: left;
+	padding-left: 20px;}
+a.no{background: #f1f1f1; margin-right: 5px; border: 1px solid #ccc;}
+a.yes:hover,a.no:hover{text-decoration:none;}
+a.yes:hover{background: url(/images/tag_hover.png) no-repeat 0 0;}
+a.no:hover{background: #b6cde3;border: 1px solid #ccc;}
 
 .btn.multiple{
   display:block;
@@ -135,6 +151,8 @@ footer{
 
 footer{
   overflow:hidden;
+  border-top: 1px solid #F1F1F1;
+  padding-top: 10px;
 }
 
 footer .left{
@@ -151,10 +169,10 @@ footer .right{
 
 
 #questionsFrame{
-  width:600px;
-  height:550px;
-  overflow:hidden;
-  margin:20px auto;
+  width: 600px;
+  height: 550px;
+  overflow: hidden;
+  margin: 10px auto 20px auto;
 }
 
 #questions{
@@ -175,6 +193,7 @@ footer .right{
   font-size:30px;
   line-height:34px;
   color: #14172A;
+	margin-bottom: 35px;
 }
 
 #questionsFrame.well {
@@ -184,6 +203,16 @@ footer .right{
 }
 
 .answers {
-  margin-top: 40px;
+  margin-top: 30px;
   line-height:42px;
+}
+#reset {
+  background: url(/images/reset.png) no-repeat 30px 10px #F1F1F1;
+	width: 74px;
+  border: 1px solid #ccc;
+	float: left;
+  text-align:center;
+  padding-top: 20px;
+  margin-right: 10px;
+  text-decoration: none;
 }
