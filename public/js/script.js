@@ -265,6 +265,9 @@ function logDemographics(type, value) {
           recipientType = 'enemy';
           break;
       }
+      //update template
+      $('.recipientBox .recipient').html(recipientType);
+      
       break;
   }
 }
