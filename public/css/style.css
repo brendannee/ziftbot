@@ -98,9 +98,9 @@ footer{
   border-top: 1px solid #f1f1f1;
 }
 
-#content p.lead{
+p.lead{
   margin-bottom: 9px;
-  color: #14172a;
+  color: #2c5987;
   text-align: center;
   font-size:13px;
 }
@@ -117,7 +117,6 @@ a.yes,a.no {
 	font-size: 30px;
 	font-weight: 700;
 	color: #14172a;
-	padding: 10px 15px;
 	float: left;
 }
 a.yes{
@@ -126,8 +125,15 @@ a.yes{
 	width: 174px; 
 	display: block;
 	text-align: left;
-	padding-left: 20px;}
-a.no{background: #f1f1f1; margin-right: 5px; border: 1px solid #ccc;}
+	padding: 10px 15px}
+a.no{
+  background: #f1f1f1; 
+  margin-right: 5px; 
+  border: 1px solid #ccc;
+  padding: 7px 15px;
+  margin-top: 3px;
+  margin-left: 140px;
+}
 a.yes:hover,a.no:hover{text-decoration:none;}
 a.yes:hover{background: url(/images/tag_hover.png) no-repeat 0 0;}
 a.no:hover{background: #b6cde3;border: 1px solid #ccc;}
@@ -204,11 +210,16 @@ footer .right{
   margin-top: 30px;
   line-height:42px;
 }
-
+.recipientBox {
+  text-align: center;
+}
 .recipientBox a{
   display:inline-block;
   margin-left:5px;
   font-size:10px;
+  background: url(/images/reset.png) no-repeat 0 0;
+  padding-left: 22px;
+  margin-top: 5px;
 }
 
 .recipientBox .recipient{
