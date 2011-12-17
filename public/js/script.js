@@ -62,18 +62,16 @@ function nextScreen(){
     
   var next_question = $(this).attr('data-next')
     , next_div = $(this).parents('.question').next();
-    
-  if(!gender && !recipient){
+  
+  if( $(this).attr('data-type') == 'product' ) {
+    //show product
+    return true;
+  } else if(!gender && !recipient) {
     //start demographic questions
     $.getJSON('/api/demographics/1', displayQuestion);
-    
   } else if(next_question != 'undefined' && next_question) {
     //do next demographic question
     $.getJSON('/api/demographics/' + next_question, displayQuestion);
-  } else if( $(this).attr('data-type') == 'product' ) {
-    //show product
-    return true;
-      
   } else if( $(this).attr('data-value') == 'yes' ) {
     //product page is pre-rendered, update history and scroll question
     if ( Modernizr.history ) {
