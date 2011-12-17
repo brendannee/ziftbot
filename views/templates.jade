@@ -18,7 +18,7 @@ template(id='product'):
     - if (!recipientType)
       phrase = 'They would love ' + article + ' '
     - else
-      phrase = 'My ' + recipientType + ' would love ' + article + ' '
+      phrase = 'Your ' + recipientType + ' would love ' + article + ' '
     .questionText
        span.phrase= phrase
        span.productName #{brandName} #{productName}.
