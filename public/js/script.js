@@ -10,7 +10,7 @@ $(document).ready(function(){
 
   //load first question, unless URL has product ID
   if(document.location.pathname.split('/')[1] == 'product'){
-    $.getJSON('/api/product/' + document.location.pathname.split('/')[2], renderProduct);
+    $.getJSON('/api/product/info/' + document.location.pathname.split('/')[2], renderProduct);
   } else {
     nextScreen();
   }
@@ -23,6 +23,19 @@ $(document).ready(function(){
     $.getJSON('/api/demographics/1', displayQuestion);
     return false;
   });
+
+  $('#sendProduct').on('click', function(){
+    $.getJSON('/api/product/send', {
+        to: 'brendan@blinktag.com'
+      , firstName: capitaliseFirstLetter('Brendan')
+      , lastName:  capitaliseFirstLetter('Nee')
+      , message: 'Test message'
+      , product_id: 7766192
+      }, function(data){ console.log(data); });
+    
+    return false;
+  });
+
 
 });
 
@@ -143,7 +156,7 @@ function displayQuestion(question) {
 
   if (question.product) {
     console.log(question.product);
-    $.getJSON('/api/product/' + question.product, renderProduct);
+    $.getJSON('/api/product/info/' + question.product, renderProduct);
   }
 
 }

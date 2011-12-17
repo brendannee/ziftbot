@@ -65,7 +65,7 @@ module.exports = function routes(app){
 
       if (!possibleQuestions.length) {
         res.json('No more questions', 402);
-      } else {
+      } else { 
         var i = Math.floor(Math.random() * possibleQuestions.length);
         res.json(possibleQuestions[i]);
       }
@@ -74,33 +74,68 @@ module.exports = function routes(app){
     getProduct: function(req, res) {
       app.set('zappos').getProduct(
         req.param('product_id'), 
-        ['videos', 'productRating', 'overallRating', 'comforRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
+        ['videos', 'productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
         function(err, data){
           res.json(err || data);
         });
     },
     
-    sendMail: function(req, res) {
-      var sgusername = 'sendgrid_username';
-      var sgpassword = 'sendgrid_password';
-      email.send({
-          host : "smtp.sendgrid.net",
-          port : "587",
-          domain : "ziftbot.com",
-          to : "recipient@domain.com",
-          from : "yourname@yourdomain.com",
-          subject : "This is a subject",
-          body: "Hello, this is a test body",
-          authentication : "login",
-          username : sgusername,
-          password : sgpassword
-        },
-        function(err, result){
+    sendProduct: function(req, res) {
+      var missing = [];
+      [ 'to', 'firstName', 'lastName', 'product_id' ].forEach(function(p) {
+        if (!req.query[p]) {
+          missing.push(p);
+        }
+      });
+      
+      if (missing.length) {
+        return res.json('Missing parameter(s): ' + missing.join(', '), 400);
+      }
+      
+      app.set('zappos').getProduct(
+        req.param('product_id'), 
+        ['productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
+        function(err, data){
           if(err){
-            console.log(err);
+            res.json(err);
+          } else {
+            var subject = req.param('firstName') + ' thinks you should check out ' + data[0].brandName + ' ' + data[0].productName;
+            var body = 'I was browsing <a href="http://zitbot.com">ZiftBot</a> and found ' + data[0].brandName + ' ' + data[0].productName;
+              ' - I thought you might be interesting in this.';
+            body += req.param('message') || '';
+            body += '<h2>' + data[0].brandName + ' ' + data[0].productName + '</h2>'
+            if(data[0].styles.length){
+              body += '<img src="' + data[0].styles[0].imageUrl + '">' +
+                data[0].styles[0].originalPrice + '<br>';
+            }
+            body += '<p>' + data[0].description + ' </p>';
+              '<a href="' + data[0].defaultProductUrl + '">View product details</a>';
+            
+            body += req.param('message') || '';
+            
+            var sgusername = 'blinktag';
+            var sgpassword = process.env.SENDGRID_PW;
+            email.send({
+              host : "smtp.sendgrid.net",
+              port : "587",
+              domain : "ziftbot.com",
+              to : req.param('to'),
+              sub : {
+                "%name%": req.param('firstName') + ' ' + req.param('lastName'),
+              },
+              from : "noreply@ziftbot.com",
+              subject : subject,
+              body: body,
+              authentication : "login",
+              username : sgusername,
+              password : sgpassword
+            },
+            function(err, data){
+              console.log(err);
+              res.json(err || data);
+            });
           }
         });
-      
     }
   }
 }
