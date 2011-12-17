@@ -2,10 +2,11 @@ template(id='question'):
   .question
     .questionText= q
     .answers
-      - each answer, i in a
-        - if (Object.keys(a).length < 3)
-          a.btn.large.primary.two(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
-        - else
+      - if (a['no'] && a['yes'])
+        a.btn.large.primary.two(data-next= a['no'].next, data-type= type, data-value="no", data-product= product)= a['no'].text
+        a.btn.large.primary.two(data-next= a['yes'].next, data-type= type, data-value="yes", data-product= product)= a['yes'].text
+      - else
+        - each answer, i in a
           a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
   
   
