@@ -3,8 +3,8 @@ template(id='question'):
     .questionText= q
     .answers
       - if (a['no'] && a['yes'])
-        a.btn.large.primary.two(data-next= a['no'].next, data-type= type, data-value="no", data-product= product)= a['no'].text
-        a.btn.large.primary.two(data-next= a['yes'].next, data-type= type, data-value="yes", data-product= product)= a['yes'].text
+        a.no(data-next= a['no'].next, data-type= type, data-value="no", data-product= product)= a['no'].text
+        a.yes(data-next= a['yes'].next, data-type= type, data-value="yes", data-product= product)= a['yes'].text
       - else
         - each answer, i in a
           a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
@@ -25,8 +25,8 @@ template(id='product'):
        span.productName #{brandName} #{productName}.
     .answers
       a.no(data-type= 'question') Meh.
-      a.yes(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
-      p.price= price
+      a.yes.zift(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
+      p.price= price + ' + free shipping'
       
 template(id='video'):
   .video-js-box.vim-css
