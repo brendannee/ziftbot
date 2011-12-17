@@ -89,7 +89,7 @@ function nextScreen(){
   } else {
     //do product questions
     //show recipient reset
-    $('#recipientBox').show();
+    $('#recipientBox').slideDown();
     
       
     //remove pre-rendered product in next sibling div
