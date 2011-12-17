@@ -40,6 +40,7 @@ $(document).ready(function(){
 });
 
 function nextScreen(){
+  
   //stop all playing videos
   try{
     currentVid.pause();
@@ -76,6 +77,7 @@ function nextScreen(){
       
   } else if( $(this).attr('data-value') == 'yes' ) {
     //product page is pre-rendered, update history and scroll question
+    
     if ( Modernizr.history ) {
       productID = $(this).attr('data-product');
       history.pushState({ productID: productID}, productID, 'product/' + productID)
@@ -88,6 +90,9 @@ function nextScreen(){
     }
   } else {
     //do product questions
+    //show recipient reset
+    $('#recipientBox').show();
+    
       
     //remove pre-rendered product in next sibling div
     next_div.remove();
