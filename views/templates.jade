@@ -8,11 +8,11 @@ template(id='question'):
 
 template(id='product'):
   .question.product(id= productId)
-    .questionText Would your #{recipientType} like a #{brandName} #{productName}?
+    .questionText My #{recipientType} would love a #{brandName} #{productName}.
     .productInfo= price
     .answers
-      a.btn.large.primary.two(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Yes
-      a.btn.large.primary.two(data-type= 'question') No, ask me more questions
+      a.no(data-type= 'question') Moar questions
+      a.yes(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
 
 template(id='video'):
   .video-js-box.vim-css
