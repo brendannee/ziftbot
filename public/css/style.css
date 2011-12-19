@@ -416,6 +416,7 @@ a.yes{
 a.yes.zift{
   border:none;
   margin-top:0;
+  margin-right:-65px;
   background: url(/images/tag.png) no-repeat 0 0;
 	width: 174px;
   padding: 10px 15px;
