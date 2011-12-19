@@ -104,7 +104,7 @@ function nextScreen(){
     , next_div = $(this).parents('.question').next();
   
   if( $(this).attr('data-type') == 'product' || $(this).attr('data-type') == 'modal' ) {
-    //show product
+    //show product or modal
     return true;
   } else if(!gender && !recipient) {
     //start demographic questions
@@ -190,11 +190,14 @@ function displayQuestion(question) {
   question.product = question.product || null;
 
   template('question', question).appendTo('#questions');
-
+  
   scrollQuestions();
 
   if (question.product) {
     console.log(question.product);
+
+    $('#questions').append('<div class="question product">');
+    
     $.getJSON('/api/product/info/' + question.product, renderProduct);
   }
 
@@ -212,7 +215,7 @@ function renderProduct(product) {
     product.price = (product.styles.length) ? product.styles[0].price : '';
     product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
     
-    //if not mobile, then show videos
+    //if not mobile, then show videos, otherwise we'll do images
     if(!express.ua.Mobile && !express.ua.iPhone && !express.ua.iPad && !express.ua.Android && !express.ua.iPod && !express.ua.webOS) {
       $.each(product.videos, function(i, value) {
         if (value.videoEncodingExtension == 'mp4') {
@@ -227,7 +230,7 @@ function renderProduct(product) {
 
     $product = template('product', product);
     $product.find('.questionText').after($media);
-    $product.appendTo('#questions');
+    $('#questions .question:last-child').html($product);
   
     // Render video, if present
     if (product.mp4) {
@@ -236,9 +239,8 @@ function renderProduct(product) {
       });
     }
   
-    //if we're on a product page, scroll questions and start video
+    //if we're on a product page, start video
     if(express.product_id){
-      scrollQuestions();
       setTimeout(function(){currentVid.play();}, 1000);
     }
     
@@ -247,17 +249,8 @@ function renderProduct(product) {
     $('#sendForm h3').html('Send ' + product.brandName + ' ' + product.productName + ' to a friend');
   } else {
     //product no longer exists, so get a new question
-    $.ajax({
-        url: '/api/questions'
-      , dataType: 'json'
-      , data: {
-          recipient: recipient
-        , gender: gender
-        , ignore: ignore.join(',')
-        }
-      , success: displayQuestion
-      , error: questionError
-    });
+    $('#questions .question:last-child').remove();
+    nextScreen();
   }
   
 }
