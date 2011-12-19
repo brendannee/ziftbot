@@ -15,9 +15,11 @@ module.exports = function routes(app){
   
   
   app.namespace('/api', function(){
-    app.get('/demographics/:question_id', api.getDemographics);
+    app.get('/demographics/:question_id', api.getDemographicQuestion);
      
-    app.post('/questions', api.getQuestions);
+    app.post('/questions/random', api.getRandomQuestion);
+
+    app.post('/questions', api.createQuestion);
   
     app.get('/product/info/:product_id', api.getProduct);
     

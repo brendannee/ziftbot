@@ -8,7 +8,7 @@ module.exports = function routes(app){
     , Question = db.model('Question');
 
   return {
-    getDemographics: function(req, res) {
+    getDemographicQuestion: function(req, res) {
       var question_id = req.param('question_id'),
           question = demographics[question_id];
 
@@ -19,7 +19,41 @@ module.exports = function routes(app){
       }
     },
 
-    getQuestions: function(req, res) {
+    createQuestion: function(req, res) {
+      var question = {}
+        , missing = [];
+
+      [ 'text', 'product' ].forEach(function(p) {
+        if (!req.param(p)) {
+          missing.push(p);
+        } else {
+          question[p] = req.param(p);
+        }
+      });
+
+      [ 'yes', 'no' ].forEach(function(p) {
+        if (req.param(p)) {
+          question[p] = req.param(p);
+        }
+      });
+
+      [ 'genders', 'recipients' ].forEach(function(p) {
+        if (req.param(p)) {
+          question[p] = JSON.parse(req.param(p));
+        }
+      });
+
+      if (missing.length) {
+        return res.json('Missing parameter(s): ' + missing.join(', '), 400);
+      }
+  
+      Question.create(question, function(e, question) {
+        if (e || !question) return res.json('Unable to create question', 500);
+        res.json(question.toObject());
+      });
+    },
+
+    getRandomQuestion: function(req, res) {
       var missing = []
         , query = {};
       [ 'genders', 'recipients' ].forEach(function(p) {
