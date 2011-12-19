@@ -131,7 +131,7 @@ function displayQuestion(question) {
   console.log(question);
   
   // Log question as seen
-  if (question.id) {
+  if (parseInt(question.id, 10)) {
     ignore.push(question.id);
   }
   
