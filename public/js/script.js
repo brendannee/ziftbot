@@ -246,8 +246,9 @@ function renderProduct(product) {
       });
     }
   
-    //if we're on a product page, start video
+    //if we're on a product page, start video then remove product ID
     if(express.product_id){
+      delete express.product_id;
       setTimeout(function(){currentVid.play();}, 1000);
     }
     
