@@ -7,6 +7,8 @@ var recipient
   , currentVid;
 
 $(document).ready(function(){
+  //configure modal window
+  $('#sendForm').modal({backdrop:'static'});
 
   //load first question, unless express.product_id is present
   if(express.product_id){
@@ -25,7 +27,6 @@ $(document).ready(function(){
   });
   
   $('#questions').on('click', '#emailProduct', function(){
-    $('#sendForm').modal({backdrop:'static'});
     $('#sendForm').modal('show');
     return false;
   });
