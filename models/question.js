@@ -9,3 +9,5 @@ var Question = new Schema({
   , recipients: { type: [ String ], default: [ 'spouse', 'friend', 'sibling', 'parent', 'enemy' ] }
   , product: { type: String }
 });
+
+mongoose.model('Question', Question);

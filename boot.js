@@ -12,4 +12,4 @@ module.exports = function boot(app){
 
   return app;
 
-}
+};

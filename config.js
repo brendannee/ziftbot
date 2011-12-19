@@ -6,6 +6,8 @@ var express = require('express')
   , jadevu = require('jadevu')
   , Zappos = require('zappos')
   , keys = require('./keys');
+
+require('./models/question');
   
 module.exports = function(app) {
   app.configure('development', function(){
