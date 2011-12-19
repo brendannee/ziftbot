@@ -17,7 +17,7 @@ module.exports = function routes(app){
   app.namespace('/api', function(){
     app.get('/demographics/:question_id', api.getDemographics);
      
-    app.get('/questions', api.getQuestions);
+    app.post('/questions', api.getQuestions);
   
     app.get('/product/info/:product_id', api.getProduct);
     

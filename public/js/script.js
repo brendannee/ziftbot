@@ -102,10 +102,11 @@ function nextScreen(){
       
     $.ajax({
         url: '/api/questions'
+      , type: 'post'
       , dataType: 'json'
       , data: {
-          recipient: recipient
-        , gender: gender
+          recipients: recipient
+        , genders: gender
         , ignore: ignore.join(',')
         }
       , success: displayQuestion
@@ -136,30 +137,24 @@ function displayQuestion(question) {
   console.log(question);
   
   // Log question as seen
-  if (parseInt(question.id, 10)) {
-    ignore.push(question.id);
+  if (question._id) {
+    ignore.push(question._id);
   }
   
   // Replace text with proper wording
-  question.q = mustache(question.q, {
+  question.text = mustache(question.text, {
       pronoun: pronoun
     , posessiveAdjective: posessiveAdjective
     , recipientType: recipientType
   });
-
-  $.each(question.a, function(i, answer) {
-    answer.text = mustache(answer.text, {
-        pronoun: pronoun
-    });
-  });
-  
-  if ( !question.product ) {
-    question.product = null;
-  }
+  question.type = question.type || false;
+  question.answers = question.answers || false;
+  question.yes = question.yes ? mustache(question.yes, { pronoun: pronoun }) : null;
+  question.no = question.no ? mustache(question.no, { pronoun: pronoun }): null;
+  question.product = question.product || null;
 
   template('question', question).appendTo('#questions');
 
-  //scroll questions
   scrollQuestions();
 
   if (question.product) {
