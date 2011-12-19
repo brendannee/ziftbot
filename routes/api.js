@@ -91,7 +91,7 @@ module.exports = function routes(app){
       if (missing.length) {
         return res.json('Missing parameter(s): ' + missing.join(', '), 400);
       }
-      
+
       app.set('zappos').getProduct(
         req.param('product_id'), 
         ['productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
@@ -121,8 +121,7 @@ module.exports = function routes(app){
             body += data[0].description + '\n Product URL: ' + data[0].defaultProductUrl +
               'This message from sent to you from Ziftbot.com on behalf of ' + req.param('sender') + '.';
             
-            var sgusername = 'blinktag';
-            var sgpassword = process.env.SENDGRID_PW;
+            
             email.send({
               host : "smtp.sendgrid.net",
               port : "587",
@@ -136,8 +135,8 @@ module.exports = function routes(app){
               body: body,
               html: html,
               authentication : "login",
-              username : sgusername,
-              password : sgpassword
+              username : app.set('sendgrid').username,
+              password : app.set('sendgrid').password
             },
             function(err, data){
               console.log(err);

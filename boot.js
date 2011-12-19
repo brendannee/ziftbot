@@ -1,4 +1,3 @@
-
 var config = require('./config')
   , routes = require('./routes')
   , errorHandlers = require('./lib/error-handlers');
@@ -13,4 +12,4 @@ module.exports = function boot(app){
 
   return app;
 
-}
+};
