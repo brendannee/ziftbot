@@ -2,6 +2,8 @@
 var boot = module.exports = require('./boot')
   , app = require('express').createServer();
 
+console.log = require('logging').from(__dirname);
+
 module.exports = boot(app);
 
 if (!module.parent) {

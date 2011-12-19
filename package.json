@@ -13,5 +13,6 @@
     , "nib": "0.3.x"
     , "underscore": "1.2.x"
     , "zappos": "0.0.x"
+    , "logging": "2.0.x"
   }
 }

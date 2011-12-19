@@ -8,9 +8,18 @@ var fs = require('fs')
 questions.forEach(function(q, i) {
   questions[i].id = i;
   questions[i].type = 'question';
+
 });
 
 module.exports = function routes(app){
+  var db = app.set('db')
+    , Question = db.model('Question');
+
+  questions.forEach(function(q, i) {
+    var q = _.clone(q);
+    console.log(q);
+    //Question.create(
+  });
 
   return {
     getDemographics: function(req, res) {
@@ -25,10 +34,13 @@ module.exports = function routes(app){
     },
 
     getQuestions: function(req, res) {
-      var missing = [];
+      var missing = []
+        , query = {};
       [ 'gender', 'recipient' ].forEach(function(p) {
-        if (!req.query[p]) {
+        if (!req.param(p)) {
           missing.push(p);
+        } else {
+          query[p] = req.param(p);
         }
       });
 
@@ -43,14 +55,22 @@ module.exports = function routes(app){
 
       var error;
       _.keys(allowed).forEach(function(p) {
-        if (allowed[p].indexOf(req.param(p)) == -1) {
-          error = req.param(p) + ' is an unknown ' + p;
+        if (allowed[p].indexOf(query[p]) == -1) {
+          error = query[p] + ' is an unknown ' + p;
         }
       });
   
       if (error) {
         return res.json(error, 400);
       }
+      
+      var rand = Math.random();
+      query.random = { $gte: rand };
+      Question.findOne(query, function(e, question) {
+        console.log(e, question);
+      });
+
+      return res.send(200);
 
       var n = questions.length
         , ignore = req.param('ignore') ? req.param('ignore').split(',') : false
