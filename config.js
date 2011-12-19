@@ -4,8 +4,13 @@ var express = require('express')
   , stylus = require('stylus')
   , nib = require('nib')
   , jadevu = require('jadevu')
-  , Zappos = require('zappos')
-  , keys = require('./keys');
+  , Zappos = require('zappos');
+  
+  try {
+    var keys = require('./keys');
+  } catch(e) {
+    console.log(e);
+  }
 
 require('./models/question');
   
