@@ -205,14 +205,17 @@ function renderProduct(product) {
     product.recipientType = recipientType;
     product.price = (product.styles.length) ? product.styles[0].price : '';
     product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
-  
-    $.each(product.videos, function(i, value) {
-      if (value.videoEncodingExtension == 'mp4') {
-        product.mp4 = value.filename;
-      } else if (value.videoEncodingExtension == 'flv') {
-        product.swf = value.filename;
-      }
-    });
+    
+    //if not mobile, then show videos
+    if(!ua.Mobile && !ua.iPhone && !ua.iPad && !ua.Android && !ua.iPod && !ua.webOS) {
+      $.each(product.videos, function(i, value) {
+        if (value.videoEncodingExtension == 'mp4') {
+          product.mp4 = value.filename;
+        } else if (value.videoEncodingExtension == 'flv') {
+          product.swf = value.filename;
+        }
+      });
+    }
 
     $media = (product.mp4) ? template('video', product) : template('image', product);
 
