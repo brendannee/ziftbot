@@ -272,8 +272,8 @@ function renderProduct(product) {
 function questionError(jqXHR, textStatus) {
   if (jqXHR.status == 402) {
     var error = {
-        q: 'We\'re out of ideas.  Would you like to try ZiftBot again?'
-      , a: [{ next: 1, text: 'Yes' }]
+        text: 'We\'re out of ideas.  Would you like to try ZiftBot again?'
+      , answers: [{ next: 1, text: 'Yes' }]
       , type: 'reset'
       , product: null
     };
