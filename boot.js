@@ -1,4 +1,3 @@
-
 var config = require('./config')
   , routes = require('./routes')
   , errorHandlers = require('./lib/error-handlers');

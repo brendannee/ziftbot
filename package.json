@@ -5,6 +5,7 @@
   "dependencies": {
       "express": "2.5.x"
     , "express-namespace": "0.0.x"
+    , "mongoose": "2.4.x"
     , "jade": "0.19.x"
     , "jadevu": "0.0.x"
     , "mailer": "0.6.x"
