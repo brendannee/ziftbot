@@ -25,8 +25,9 @@ $(document).ready(function(){
   });
   
   $('#questions').on('click', '#sendProduct', function(){
-     $('#sendForm').modal('show');
-     return false;
+    $('#sendForm').modal({backdrop:'static'});
+    $('#sendForm').modal('show');
+    return false;
   });
 
   $('#sendForm').on('click', '.primary', function(){
