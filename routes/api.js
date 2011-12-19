@@ -15,11 +15,21 @@ module.exports = function routes(app){
   var db = app.set('db')
     , Question = db.model('Question');
 
-  questions.forEach(function(q, i) {
-    var q = _.clone(q);
-    console.log(q);
-    //Question.create(
-  });
+  /*questions.forEach(function(q, i) {
+    var question = {
+        text: q.q
+      , genders: q.genders
+      , recipients: q.recipients
+      , product: q.product
+      , text: q.q
+      , yes: q.a.yes.text
+      , no: q.a.no.text
+    };
+    //console.log(question);
+    Question.create(question, function(e, question) {
+      console.log(e, question.toObject());
+    });
+  });*/
 
   return {
     getDemographics: function(req, res) {
@@ -36,7 +46,7 @@ module.exports = function routes(app){
     getQuestions: function(req, res) {
       var missing = []
         , query = {};
-      [ 'gender', 'recipient' ].forEach(function(p) {
+      [ 'genders', 'recipients' ].forEach(function(p) {
         if (!req.param(p)) {
           missing.push(p);
         } else {
@@ -49,8 +59,8 @@ module.exports = function routes(app){
       }
 
       var allowed = {
-          gender: [ 'male', 'female' ]
-        , recipient: [ 'spouse', 'friend', 'parent', 'sibling', 'child', 'enemy' ]
+          genders: [ 'male', 'female' ]
+        , recipients: [ 'spouse', 'friend', 'parent', 'sibling', 'child', 'enemy' ]
       };
 
       var error;
@@ -63,32 +73,34 @@ module.exports = function routes(app){
       if (error) {
         return res.json(error, 400);
       }
+
+      var ignore = req.param('ignore') ? req.param('ignore').split(',') : false;
+      if (ignore) {
+        query._id = { $nin: ignore };
+      }
       
       var rand = Math.random();
       query.random = { $gte: rand };
+      //console.log(query);
       Question.findOne(query, function(e, question) {
-        console.log(e, question);
+        if (e) return next(e);
+
+        if (question) {
+          return res.json(question);
+        } else {
+          query.random = { $lte: rand };
+          Question.findOne(query, function(e, question) {
+            if (e) return next(e);
+            
+            if (question) {
+              res.json(question);
+            } else {
+              res.json('No more questions', 402);
+            }
+          });
+        }
       });
 
-      return res.send(200);
-
-      var n = questions.length
-        , ignore = req.param('ignore') ? req.param('ignore').split(',') : false
-        , possibleQuestions = ignore
-            ? _.reject(_.clone(questions), function(q, i) { return _.contains(ignore, ''+i); })
-            : _.clone(questions);
-  
-      possibleQuestions = _.reject(possibleQuestions, function(q) {
-        return (!_.contains(q.genders, req.param('gender')) ||
-               !_.contains(q.recipients, req.param('recipient')));
-      });
-
-      if (!possibleQuestions.length) {
-        res.json('No more questions', 402);
-      } else { 
-        var i = Math.floor(Math.random() * possibleQuestions.length);
-        res.json(possibleQuestions[i]);
-      }
     },
 
     getProduct: function(req, res) {

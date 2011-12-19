@@ -8,6 +8,7 @@ var Question = new Schema({
   , genders: { type: [ String ], default: [ 'male', 'female' ] }
   , recipients: { type: [ String ], default: [ 'spouse', 'friend', 'sibling', 'parent', 'enemy' ] }
   , product: { type: String }
+  , random: { type: Number, default: Math.random }
 });
 
 mongoose.model('Question', Question);
