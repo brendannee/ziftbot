@@ -24,10 +24,6 @@ module.exports = function routes(app){
 
     if (/webOS\//.test(ua))
       $.webOS = /webOS\/([0-9\.]+)[\);]/.exec(ua)[1];
-      
-
-    if (/(Intel|PPC) Mac OS X/.test(ua))
-        $.Mac = /(Intel|PPC) Mac OS X ?([0-9\._]*)[\)\;]/.exec(ua)[2].replace(/_/g, '.') || true;
 
     res.expose({ua: $});
     

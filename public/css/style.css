@@ -468,7 +468,7 @@ footer .right{
   width: 600px;
   height: 550px;
   overflow: hidden;
-  margin: 10px auto 20px auto;
+  margin: 0 auto 20px auto;  
 }
 
 #questions{
@@ -492,11 +492,6 @@ footer .right{
 	margin-bottom: 20px;
 }
 
-#questionsFrame.well {
-  background-color: #fff;
-  box-shadow: none;
-  border: none;
-}
 #recipientBox {
   text-align: center;
   display:none;
