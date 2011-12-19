@@ -6,4 +6,36 @@
   #questions
     .question
 
-a(href="#", id="sendProduct") Send This
+a#sendProduct(href="#", data-controls-modal="sendForm", data-backdrop="static") Send This
+
+#sendForm.modal.hide.fade
+  .modal-header
+    a.close(href="#") x
+    h3 Send Product
+  .modal-body
+    form
+      label Send this product to a friend
+      fieldset
+        .clearfix
+          label(for="to") Recipient's email
+          .input
+            input#to.xlarge(name="to", size="30", type="text")
+        .clearfix
+          label(for="sender") Your Email
+          .input
+            input#sender.xlarge(name="sender", size="30", type="text")
+        .clearfix
+          label(for="firstName") Your First Name
+          .input
+            input#firstName.xlarge(name="firstName"", size="30", type="text")
+        .clearfix
+          label(for="lastName") Your Last Name
+          .input
+            input#lastName.xlarge(name="lastName", size="30", type="text")
+        .clearfix
+          label(for="message") Message
+          .input
+            textarea#message.xxlarge(name="message", rows="3")
+        
+  .modal-footer
+    a.btn.primary Send
