@@ -1,13 +1,13 @@
 template(id='question'):
   .question
-    .questionText= q
+    .questionText= text
     .answers
-      - if (a['no'] && a['yes'])
-        a.no(data-next= a['no'].next, data-type= type, data-value="no", data-product= product)= a['no'].text
-        a.yes(data-next= a['yes'].next, data-type= type, data-value="yes", data-product= product)= a['yes'].text
-      - else
-        - each answer, i in a
-          a.no.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+        - if (answers)
+          - each answer, i in answers
+            a.no.multiple(data-next= answer.next, data-type= type, data-value= i)= answer.text
+        - else
+          a.no(data-type= type, data-value="no", data-product= product)= no
+          a.yes(data-type= type, data-value="yes", data-product= product)= yes
   
   
 template(id='product'):
