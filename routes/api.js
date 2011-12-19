@@ -122,7 +122,7 @@ module.exports = function routes(app){
         req.param('product_id'),
         ['affiliate', 'videos', 'productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
         {
-          affiliate: '{"id":"3563269"}'
+          affiliate: '{"id":"5576613"}'
         },
         function(err, data){
           res.json(err || data);
