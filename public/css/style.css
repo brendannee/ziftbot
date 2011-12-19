@@ -394,36 +394,42 @@ p.lead{
 
 .answers {
   margin-top: 26px;
-  line-height:42px;
+  line-height:30px;
   display:inline-block;
 }
-
+a.yes:first-letter, a.no:first-letter {
+	text-transform: uppercase;
+}
 a.yes,a.no {
-	font-size: 30px;
-	font-weight: 700;
+	font-size: 22px;
 	color: #14172a;
 	float: left;
   border: 1px solid #ccc;
   cursor:pointer;
+  padding: 10px 15px;
 }
 a.yes{
   background:#ceebbb;
-  margin: 3px 0 0 5px;
+  margin-left: 5px;
 	display: block;
 	text-align: left;
-	padding: 7px 15px;
 }
 a.yes.zift{
   border:none;
   margin-top:0;
   background: url(/images/tag.png) no-repeat 0 0;
 	width: 174px;
-  padding: 10px 15px;
+  padding: 10px 15px 10px 20px;
+  line-height: 42px;
 }
 a.no{
   background: #f1f1f1; 
-  margin: 3px 5px 0 0; 
-  padding: 7px 15px;
+  margin-right: 5px;
+}
+a.no.zift{
+  margin-top: 3px;
+  padding: 6px 15px 8px 15px;
+  line-height: 42px;
 }
 a.yes:hover,a.no:hover{text-decoration:none;}
 a.yes.zift:hover{background: url(/images/tag_hover.png) no-repeat 0 0;}
@@ -442,6 +448,7 @@ p.price {
   clear:both;
   font-weight:bold;
   padding-top:10px;
+  margin-left: 20px;
 }
 
 footer{
