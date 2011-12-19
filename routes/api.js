@@ -1,35 +1,11 @@
 var fs = require('fs')
   , _ = require('underscore')
   , demographics = require('../lib/demographics')
-  , questions = require('../lib/questions')
   , email = require('mailer');
   
-//Add index to questions
-questions.forEach(function(q, i) {
-  questions[i].id = i;
-  questions[i].type = 'question';
-
-});
-
 module.exports = function routes(app){
   var db = app.set('db')
     , Question = db.model('Question');
-
-  /*questions.forEach(function(q, i) {
-    var question = {
-        text: q.q
-      , genders: q.genders
-      , recipients: q.recipients
-      , product: q.product
-      , text: q.q
-      , yes: q.a.yes.text
-      , no: q.a.no.text
-    };
-    //console.log(question);
-    Question.create(question, function(e, question) {
-      console.log(e, question.toObject());
-    });
-  });*/
 
   return {
     getDemographics: function(req, res) {
