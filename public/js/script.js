@@ -26,7 +26,7 @@ $(document).ready(function(){
     return false;
   });
   
-  $('#questions').on('click', '#emailProduct', function(){
+  $('#questions').on('click', '.emailProduct', function(){
     $('#sendForm').modal('show');
     return false;
   });
@@ -90,9 +90,6 @@ function nextScreen(){
   }
   catch(e){
   }
-    
-  //Hide send button
-  $('#emailProduct').fadeOut();
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
@@ -127,8 +124,6 @@ function nextScreen(){
       history.pushState({ productID: productID}, productID, 'product/' + productID)
     }
     scrollQuestions();
-    
-    $('#emailProduct').fadeIn();
       
     //render videoJS and start video, if the next question contains a video
     if($('video', next_div).length){
@@ -257,8 +252,9 @@ function renderProduct(product) {
     $('#sendForm h3').html('Email ' + product.brandName + ' ' + product.productName + ' to a friend');
     
     //add info to tweet button
-    var tweetText = 'I just found ' + product.brandName + ' ' + product.productName + ' http://ziftbot.com/product/' + product.productId + ' on Ziftbot';
-    $('#tweetProduct')
+    
+    var tweetText = 'I found ' + product.brandName + ' ' + product.productName + ' http://ziftbot.com/product/' + product.productId + ' on Ziftbot';
+    $('#questions .question:last-child .tweetProduct')
       .attr('href', 'http://twitter.com/home/?status=' + encodeURIComponent(tweetText))
       .attr('title', 'Tweet ' + product.brandName + ' ' + product.productName);
   } else {
