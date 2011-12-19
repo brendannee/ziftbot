@@ -287,10 +287,13 @@ function scrollQuestions(){
      duration: 'slow',
      easing: 'easeOutQuint',
      complete: function(){
-       //check if indentation is less than
-       if( parseInt($('#questions').css('marginLeft'), 10) % parseInt($('#questionsFrame').css('width'), 10) != 0){
-         console.log('test');
-         var newIndentation = Math.floor(parseInt($('#questions').css('marginLeft'), 10) / parseInt($('#questionsFrame').css('width'), 10)) * parseInt($('#questionsFrame').css('width'), 10);
+       //check if indentation isn't divisible by questionWidth to see if we stopped an animation, if so jump to second to last question box
+       var existingMargin = parseInt($('#questions').css('marginLeft'), 10)
+         , questionWidth =  parseInt($('#questionsFrame').css('width'), 10)
+         , newIndenation;
+       if( existingMargin % questionWidth != 0){
+         newIndentation = ($('#questions .question').length - 2) * questionWidth * -1;
+         console.log('jumping to ' + newIndentation);
          $('#questions').css('marginLeft',newIndentation);
        }
      }
