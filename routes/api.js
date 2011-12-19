@@ -119,8 +119,11 @@ module.exports = function routes(app){
 
     getProduct: function(req, res) {
       app.set('zappos').getProduct(
-        req.param('product_id'), 
-        ['videos', 'productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
+        req.param('product_id'),
+        ['affiliate', 'videos', 'productRating', 'overallRating', 'comfortRating', 'lookRating', 'defaultCategory', 'defaultProductType', 'defaultSubCategory', 'description', 'styles'], 
+        {
+          affiliate: '{"id":"3563269"}'
+        },
         function(err, data){
           res.json(err || data);
         });

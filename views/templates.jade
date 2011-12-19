@@ -25,7 +25,7 @@ template(id='product'):
        span.productName #{brandName} #{productName}.
     .answers
       a.no.zift(data-type= 'question') Meh.
-      a.yes.zift(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product', target="_blank") Zift it!
+      a.yes.zift(href= affiliate, title= brandName + ' ' + productName, data-type= 'product', target="_blank") Zift it!
     .price= price + ' + free shipping'
     .sharing
       a#emailProduct(href="#", data-type="modal") [Email This]
