@@ -96,6 +96,8 @@ module.exports = function routes(app){
         if (e) return next(e);
 
         if (question) {
+          question.random = Math.random();
+          question.save();
           return res.json(question);
         } else {
           query.random = { $lte: rand };
@@ -103,6 +105,8 @@ module.exports = function routes(app){
             if (e) return next(e);
             
             if (question) {
+              question.random = Math.random();
+              question.save();
               res.json(question);
             } else {
               res.json('No more questions', 402);
