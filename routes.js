@@ -1,4 +1,5 @@
-var errors = require('./lib/util/errors');
+var errors = require('./lib/util/errors')
+  , expose = require('express-expose');
 
 module.exports = function routes(app){
   
@@ -23,19 +24,24 @@ module.exports = function routes(app){
 
     if (/webOS\//.test(ua))
       $.webOS = /webOS\/([0-9\.]+)[\);]/.exec(ua)[1];
-    
-    req.ua = $;
+      
+
+    if (/(Intel|PPC) Mac OS X/.test(ua))
+        $.Mac = /(Intel|PPC) Mac OS X ?([0-9\._]*)[\)\;]/.exec(ua)[2].replace(/_/g, '.') || true;
+
+    res.expose({ua: $});
     
     next();
   }
 
   // routes go here
   app.get('/', detectMobile, function(req, res){
-    res.render('index', { title: 'ZiftBot | Find the perfect Zappos gift by answering a few simple questions', ua:req.ua})
+    res.render('index', { title: 'ZiftBot | Find the perfect Zappos gift by answering a few simple questions'} )
   });
   
   app.get('/product/:product_id', detectMobile, function(req, res){
-    res.render('index', { title: 'ZiftBot | Find the perfect Zappos gift by answering a few simple questions', product_id: req.param('product_id'), ua:req.ua} )
+    res.expose( { product_id: req.param('product_id') } );
+    res.render('index', { title: 'ZiftBot | Find the perfect Zappos gift by answering a few simple questions'} )
   });
   
   

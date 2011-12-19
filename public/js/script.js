@@ -8,8 +8,8 @@ var recipient
 
 $(document).ready(function(){
 
-  //load first question, unless URL has product ID
-  if(document.location.pathname.split('/')[1] == 'product'){
+  //load first question, unless express.product_id is present
+  if(express.product_id){
     $.getJSON('/api/product/info/' + document.location.pathname.split('/')[2], renderProduct);
   } else {
     nextScreen();
@@ -213,7 +213,7 @@ function renderProduct(product) {
     product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
     
     //if not mobile, then show videos
-    if(!ua.Mobile && !ua.iPhone && !ua.iPad && !ua.Android && !ua.iPod && !ua.webOS) {
+    if(!express.ua.Mobile && !express.ua.iPhone && !express.ua.iPad && !express.ua.Android && !express.ua.iPod && !express.ua.webOS) {
       $.each(product.videos, function(i, value) {
         if (value.videoEncodingExtension == 'mp4') {
           product.mp4 = value.filename;
@@ -231,12 +231,15 @@ function renderProduct(product) {
   
     // Render video, if present
     if (product.mp4) {
-      currentVid = VideoJS.setup('video-' + product.productId);
+      VideoJS.DOMReady(function(){
+        currentVid = VideoJS.setup('video-' + product.productId);
+      });
     }
   
-    //if we're on a product page, scroll questions
-    if(document.location.pathname.split('/')[1] == 'product'){
+    //if we're on a product page, scroll questions and start video
+    if(express.product_id){
       scrollQuestions();
+      setTimeout(function(){currentVid.play();}, 1000);
     }
     
     //add id to send form
