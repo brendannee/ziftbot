@@ -523,3 +523,14 @@ footer .right{
 #sendForm{
   display:none;
 }
+
+#sendForm input.error{
+  border: #e86a6a 1px solid;
+}
+
+#sendForm label.error{
+  color: #e86a6a;
+  width:225px;
+  text-align:left;
+}
+

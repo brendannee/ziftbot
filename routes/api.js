@@ -159,8 +159,8 @@ module.exports = function routes(app){
             body += data[0].brandName + ' ' + data[0].productName + '\n\n'
             if(data[0].styles.length){
               html += '<a href="' + data[0].defaultProductUrl + '"><img src="' + data[0].styles[0].imageUrl + '"></a><br>' +
-                '<strong>' + data[0].styles[0].originalPrice + '<strong><br>';
-              body += data[0].styles[0].originalPrice + '\n';
+                '<strong>' + data[0].styles[0].originalPrice + ' + free shipping<strong><br>';
+              body += data[0].styles[0].originalPrice + ' + free shipping\n';
             }
             html += '<p>' + data[0].description + ' </p><a href="' + data[0].defaultProductUrl + '">View product on Zappos.com</a>' +
               '<hr>This message from sent to you from Ziftbot.com on behalf of ' + req.param('sender') + '.';

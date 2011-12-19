@@ -30,9 +30,10 @@ $(document).ready(function(){
     $('#sendForm').modal('show');
     return false;
   });
-
-  $('#sendForm').on('click', '.primary', function(){
-    $(this).attr('disabled', 'disabled');
+  
+  $('#sendForm form').validate({
+    submitHandler: function(){
+      $('#sendForm .primary').attr('disabled', 'disabled').html('Sending...');
       $.ajax({
           url: '/api/product/send'
         , type: 'get'
@@ -43,7 +44,7 @@ $(document).ready(function(){
           , firstName: capitaliseFirstLetter($('#firstName').val())
           , lastName:  capitaliseFirstLetter($('#lastName').val())
           , message: $('#message').val()
-          , product_id: $(this).attr('data-product')
+          , product_id: $('#sendForm .primary').attr('data-product')
           }
         , success: function(data){ 
             console.log(data); 
@@ -57,6 +58,11 @@ $(document).ready(function(){
         }
       });
       return false;
+    }
+  });
+
+  $('#sendForm').on('click', '.primary', function(){
+    $('#sendForm form').submit();
   });
   
   
@@ -247,7 +253,7 @@ function renderProduct(product) {
     
     //add id to email form
     $('#sendForm .primary').attr('data-product', product.productId);
-    $('#sendForm h3').html('Send ' + product.brandName + ' ' + product.productName + ' to a friend');
+    $('#sendForm h3').html('Email ' + product.brandName + ' ' + product.productName + ' to a friend');
     
     //add info to tweet button
     var tweetText = 'I just found ' + product.brandName + ' ' + product.productName + ' http://ziftbot.com/product/' + product.productId + ' on Ziftbot';
