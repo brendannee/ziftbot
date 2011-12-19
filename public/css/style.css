@@ -359,6 +359,10 @@ html,body{background-color:#fff;}
 body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:18px;color:#808080;}
 
 
+a{
+  color: #2C5987
+}
+
 #header {
   margin: 30px auto;
   text-align: center;
@@ -438,11 +442,15 @@ a.multiple{
   float:none;
 }
 
-
-p.price {
+.price {
   clear:both;
   font-weight:bold;
-  padding-top:10px;
+  padding:10px 0 15px;
+}
+
+.sharing a{
+  display:inline-block;
+  margin:0 5px;
 }
 
 footer{
@@ -457,16 +465,19 @@ footer .left{
   margin-top:2px;
 }
 
+footer .left img{
+  vertical-align:middle;
+}
+
 footer .right{
   float:right;
   text-align:right;
-  width:430px;
+  width:280px;
 }
-
 
 #questionsFrame{
   width: 600px;
-  height: 550px;
+  height: 590px;
   overflow: hidden;
   margin: 0 auto 20px auto;  
 }
@@ -477,7 +488,7 @@ footer .right{
 
 #questions .question{
   width:560px;
-  height:510px;
+  height:550px;
   overflow:hidden;
   padding:20px;
   float:left;
@@ -507,10 +518,6 @@ footer .right{
 
 #recipientBox .recipient{
   font-style:italic;
-}
-
-#sendProduct{
-  display:block;
 }
 
 #sendForm{
