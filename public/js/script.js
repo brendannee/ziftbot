@@ -24,16 +24,26 @@ $(document).ready(function(){
     return false;
   });
 
-  $('#sendProduct').on('click', function(){
-    $.getJSON('/api/product/send', {
-        to: 'brendan@blinktag.com'
-      , firstName: capitaliseFirstLetter('Brendan')
-      , lastName:  capitaliseFirstLetter('Nee')
-      , message: 'Test message'
-      , product_id: 7766192
-      }, function(data){ console.log(data); });
+  $('#sendForm').on('click', '.primary', function(){
+    $('#sendForm form').validate({
+      submitHandler: function(form){
+        $.getJSON('/api/product/send', {
+            to: $('#to').val()
+          , firstName: capitaliseFirstLetter($('#firstName').val())
+          , lastName:  capitaliseFirstLetter($('#lastName').val())
+          , message: $('#message').val()
+          , product_id: 7766192
+          }, function(data){ console.log(data); });
     
-    return false;
+        return false;
+      }   
+    });
+  });
+    
+    
+  
+  $('.modal-footer').on('click', '.close-modal', function(){
+    $('#sendForm').modal('hide');
   });
 
 
@@ -49,7 +59,7 @@ function nextScreen(){
   }
     
   //Hide send button
-  $('#sendProduct').fadeOut();
+  //$('#sendProduct').fadeOut();
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));

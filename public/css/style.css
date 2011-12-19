@@ -513,7 +513,7 @@ footer .right{
   font-style:italic;
 }
 
-#sendProduct,
+/*#sendProduct,*/
 #sendForm{
   display:none;
 }
