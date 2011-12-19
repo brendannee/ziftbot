@@ -8,7 +8,7 @@ module.exports = function routes(app){
     , Question = db.model('Question');
 
   return {
-    getDemographics: function(req, res) {
+    getDemographicQuestion: function(req, res) {
       var question_id = req.param('question_id'),
           question = demographics[question_id];
 
@@ -19,7 +19,41 @@ module.exports = function routes(app){
       }
     },
 
-    getQuestions: function(req, res) {
+    createQuestion: function(req, res) {
+      var question = {}
+        , missing = [];
+
+      [ 'text', 'product' ].forEach(function(p) {
+        if (!req.param(p)) {
+          missing.push(p);
+        } else {
+          question[p] = req.param(p);
+        }
+      });
+
+      [ 'yes', 'no' ].forEach(function(p) {
+        if (req.param(p)) {
+          question[p] = req.param(p);
+        }
+      });
+
+      [ 'genders', 'recipients' ].forEach(function(p) {
+        if (req.param(p)) {
+          question[p] = JSON.parse(req.param(p));
+        }
+      });
+
+      if (missing.length) {
+        return res.json('Missing parameter(s): ' + missing.join(', '), 400);
+      }
+  
+      Question.create(question, function(e, question) {
+        if (e || !question) return res.json('Unable to create question', 500);
+        res.json(question.toObject());
+      });
+    },
+
+    getRandomQuestion: function(req, res) {
       var missing = []
         , query = {};
       [ 'genders', 'recipients' ].forEach(function(p) {
@@ -62,6 +96,8 @@ module.exports = function routes(app){
         if (e) return next(e);
 
         if (question) {
+          question.random = Math.random();
+          question.save();
           return res.json(question);
         } else {
           query.random = { $lte: rand };
@@ -69,6 +105,8 @@ module.exports = function routes(app){
             if (e) return next(e);
             
             if (question) {
+              question.random = Math.random();
+              question.save();
               res.json(question);
             } else {
               res.json('No more questions', 402);
@@ -121,8 +159,8 @@ module.exports = function routes(app){
             body += data[0].brandName + ' ' + data[0].productName + '\n\n'
             if(data[0].styles.length){
               html += '<a href="' + data[0].defaultProductUrl + '"><img src="' + data[0].styles[0].imageUrl + '"></a><br>' +
-                '<strong>' + data[0].styles[0].originalPrice + '<strong><br>';
-              body += data[0].styles[0].originalPrice + '\n';
+                '<strong>' + data[0].styles[0].originalPrice + ' + free shipping<strong><br>';
+              body += data[0].styles[0].originalPrice + ' + free shipping\n';
             }
             html += '<p>' + data[0].description + ' </p><a href="' + data[0].defaultProductUrl + '">View product on Zappos.com</a>' +
               '<hr>This message from sent to you from Ziftbot.com on behalf of ' + req.param('sender') + '.';

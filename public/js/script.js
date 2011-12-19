@@ -7,9 +7,11 @@ var recipient
   , currentVid;
 
 $(document).ready(function(){
+  //configure modal window
+  $('#sendForm').modal({backdrop:'static'});
 
-  //load first question, unless URL has product ID
-  if(document.location.pathname.split('/')[1] == 'product'){
+  //load first question, unless express.product_id is present
+  if(express.product_id){
     $.getJSON('/api/product/info/' + document.location.pathname.split('/')[2], renderProduct);
   } else {
     nextScreen();
@@ -23,23 +25,54 @@ $(document).ready(function(){
     $.getJSON('/api/demographics/1', displayQuestion);
     return false;
   });
-
-  $('#sendForm').on('click', '.primary', function(){
-    $('#sendForm form').validate({
-      submitHandler: function(form){
-        $.getJSON('/api/product/send', {
+  
+  $('#questions').on('click', '#emailProduct', function(){
+    $('#sendForm').modal('show');
+    return false;
+  });
+  
+  $('#sendForm form').validate({
+    submitHandler: function(){
+      $('#sendForm .primary').attr('disabled', 'disabled').html('Sending...');
+      $.ajax({
+          url: '/api/product/send'
+        , type: 'get'
+        , dataType: 'json'
+        , data: {
             to: $('#to').val()
+          , sender: $('#sender').val()
           , firstName: capitaliseFirstLetter($('#firstName').val())
           , lastName:  capitaliseFirstLetter($('#lastName').val())
           , message: $('#message').val()
-          , product_id: 7766192
-          }, function(data){ console.log(data); });
-    
-        return false;
-      }   
-    });
+          , product_id: $('#sendForm .primary').attr('data-product')
+          }
+        , success: function(data){ 
+            console.log(data); 
+            if(data==true){
+              $('#sendForm .primary').html('Sent');
+              setTimeout(function(){ $('#sendForm').modal('hide'); }, 800);
+            }
+          }
+        , error: function(){
+          $('#sendForm .primary').removeAttr('disabled');
+        }
+      });
+      return false;
+    }
   });
-    
+
+  $('#sendForm').on('click', '.primary', function(){
+    $('#sendForm form').submit();
+  });
+  
+  
+  $('#sendForm').bind('hide', function(){
+    //reset form
+    $('#sendForm .primary').removeAttr('disabled');
+    $('#sendForm input').val('');
+    $('#sendForm textarea').val('');
+    $('#sendForm .primary').html('Send')
+  });
     
   
   $('.modal-footer').on('click', '.close-modal', function(){
@@ -59,7 +92,7 @@ function nextScreen(){
   }
     
   //Hide send button
-  //$('#sendProduct').fadeOut();
+  $('#emailProduct').fadeOut();
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
@@ -77,8 +110,8 @@ function nextScreen(){
   var next_question = $(this).attr('data-next')
     , next_div = $(this).parents('.question').next();
   
-  if( $(this).attr('data-type') == 'product' ) {
-    //show product
+  if( $(this).attr('data-type') == 'product') {
+    //leave this link alone
     return true;
   } else if(!gender && !recipient) {
     //start demographic questions
@@ -95,7 +128,7 @@ function nextScreen(){
     }
     scrollQuestions();
     
-    $('#sendProduct').fadeIn();
+    $('#emailProduct').fadeIn();
       
     //render videoJS and start video, if the next question contains a video
     if($('video', next_div).length){
@@ -111,7 +144,7 @@ function nextScreen(){
     next_div.remove();
       
     $.ajax({
-        url: '/api/questions'
+        url: '/api/questions/random'
       , type: 'post'
       , dataType: 'json'
       , data: {
@@ -164,11 +197,14 @@ function displayQuestion(question) {
   question.product = question.product || null;
 
   template('question', question).appendTo('#questions');
-
+  
   scrollQuestions();
 
   if (question.product) {
     console.log(question.product);
+
+    $('#questions').append('<div class="question product">');
+    
     $.getJSON('/api/product/info/' + question.product, renderProduct);
   }
 
@@ -185,43 +221,50 @@ function renderProduct(product) {
     product.recipientType = recipientType;
     product.price = (product.styles.length) ? product.styles[0].price : '';
     product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
-  
-    $.each(product.videos, function(i, value) {
-      if (value.videoEncodingExtension == 'mp4') {
-        product.mp4 = value.filename;
-      } else if (value.videoEncodingExtension == 'flv') {
-        product.swf = value.filename;
-      }
-    });
+    
+    //if not mobile, then show videos, otherwise we'll do images
+    if(!express.ua.Mobile && !express.ua.iPhone && !express.ua.iPad && !express.ua.Android && !express.ua.iPod && !express.ua.webOS) {
+      $.each(product.videos, function(i, value) {
+        if (value.videoEncodingExtension == 'mp4') {
+          product.mp4 = value.filename;
+        } else if (value.videoEncodingExtension == 'flv') {
+          product.swf = value.filename;
+        }
+      });
+    }
 
     $media = (product.mp4) ? template('video', product) : template('image', product);
 
     $product = template('product', product);
     $product.find('.questionText').after($media);
-    $product.appendTo('#questions');
+    $('#questions .question:last-child').html($product);
   
     // Render video, if present
     if (product.mp4) {
-      currentVid = VideoJS.setup('video-' + product.productId);
+      VideoJS.DOMReady(function(){
+        currentVid = VideoJS.setup('video-' + product.productId);
+      });
     }
   
-    //if we're on a product page, scroll questions
-    if(document.location.pathname.split('/')[1] == 'product'){
-      scrollQuestions();
+    //if we're on a product page, start video then remove product ID
+    if(express.product_id){
+      delete express.product_id;
+      setTimeout(function(){currentVid.play();}, 1000);
     }
+    
+    //add id to email form
+    $('#sendForm .primary').attr('data-product', product.productId);
+    $('#sendForm h3').html('Email ' + product.brandName + ' ' + product.productName + ' to a friend');
+    
+    //add info to tweet button
+    var tweetText = 'I just found ' + product.brandName + ' ' + product.productName + ' http://ziftbot.com/product/' + product.productId + ' on Ziftbot';
+    $('#tweetProduct')
+      .attr('href', 'http://twitter.com/home/?status=' + encodeURIComponent(tweetText))
+      .attr('title', 'Tweet ' + product.brandName + ' ' + product.productName);
   } else {
     //product no longer exists, so get a new question
-    $.ajax({
-        url: '/api/questions'
-      , dataType: 'json'
-      , data: {
-          recipient: recipient
-        , gender: gender
-        , ignore: ignore.join(',')
-        }
-      , success: displayQuestion
-      , error: questionError
-    });
+    $('#questions .question:last-child').remove();
+    nextScreen();
   }
   
 }
@@ -251,10 +294,13 @@ function scrollQuestions(){
      duration: 'slow',
      easing: 'easeOutQuint',
      complete: function(){
-       //check if indentation is less than
-       if( parseInt($('#questions').css('marginLeft'), 10) % parseInt($('#questionsFrame').css('width'), 10) != 0){
-         console.log('test');
-         var newIndentation = Math.floor(parseInt($('#questions').css('marginLeft'), 10) / parseInt($('#questionsFrame').css('width'), 10)) * parseInt($('#questionsFrame').css('width'), 10);
+       //check if indentation isn't divisible by questionWidth to see if we stopped an animation, if so jump to second to last question box
+       var existingMargin = parseInt($('#questions').css('marginLeft'), 10)
+         , questionWidth =  parseInt($('#questionsFrame').css('width'), 10)
+         , newIndenation;
+       if( existingMargin % questionWidth != 0){
+         newIndentation = ($('#questions .question').length - 2) * questionWidth * -1;
+         console.log('jumping to ' + newIndentation);
          $('#questions').css('marginLeft',newIndentation);
        }
      }

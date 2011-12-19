@@ -4,6 +4,7 @@
   "version": "0.0.1", 
   "dependencies": {
       "express": "2.5.x"
+    , "express-expose": "0.2.x"
     , "express-namespace": "0.0.x"
     , "mongoose": "2.4.x"
     , "jade": "0.19.x"

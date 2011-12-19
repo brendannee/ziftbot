@@ -359,6 +359,10 @@ html,body{background-color:#fff;}
 body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:18px;color:#808080;}
 
 
+a{
+  color: #2C5987
+}
+
 #header {
   margin: 30px auto;
   text-align: center;
@@ -417,6 +421,7 @@ a.yes{
 a.yes.zift{
   border:none;
   margin-top:0;
+  margin-right:-65px;
   background: url(/images/tag.png) no-repeat 0 0;
 	width: 174px;
   padding: 10px 15px 10px 20px;
@@ -443,12 +448,16 @@ a.multiple{
   float:none;
 }
 
-
-p.price {
+.price {
   clear:both;
   font-weight:bold;
-  padding-top:10px;
   margin-left: 20px;
+  padding:10px 0 15px;
+}
+
+.sharing a{
+  display:inline-block;
+  margin:0 5px;
 }
 
 footer{
@@ -463,18 +472,21 @@ footer .left{
   margin-top:2px;
 }
 
+footer .left img{
+  vertical-align:middle;
+}
+
 footer .right{
   float:right;
   text-align:right;
-  width:430px;
+  width:280px;
 }
-
 
 #questionsFrame{
   width: 600px;
-  height: 550px;
+  height: 590px;
   overflow: hidden;
-  margin: 10px auto 20px auto;
+  margin: 0 auto 20px auto;  
 }
 
 #questions{
@@ -483,7 +495,7 @@ footer .right{
 
 #questions .question{
   width:560px;
-  height:510px;
+  height:550px;
   overflow:hidden;
   padding:20px;
   float:left;
@@ -498,11 +510,6 @@ footer .right{
 	margin-bottom: 20px;
 }
 
-#questionsFrame.well {
-  background-color: #fff;
-  box-shadow: none;
-  border: none;
-}
 #recipientBox {
   text-align: center;
   display:none;
@@ -520,7 +527,17 @@ footer .right{
   font-style:italic;
 }
 
-/*#sendProduct,*/
 #sendForm{
   display:none;
 }
+
+#sendForm input.error{
+  border: #e86a6a 1px solid;
+}
+
+#sendForm label.error{
+  color: #e86a6a;
+  width:225px;
+  text-align:left;
+}
+

@@ -11,7 +11,7 @@ template(id='question'):
   
   
 template(id='product'):
-  .question.product(id= productId)
+  .productContent
     - if (brandName.charAt(0) == 'A')
       article = 'an'
     - else
@@ -25,9 +25,13 @@ template(id='product'):
        span.productName #{brandName} #{productName}.
     .answers
       a.no.zift(data-type= 'question') Meh.
-      a.yes.zift(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
-      p.price= price + ' + free shipping'
-      
+      a.yes.zift(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product', target="_blank") Zift it!
+    .price= price + ' + free shipping'
+    .sharing
+      a#emailProduct(href="#", data-type="modal") [Email This]
+      a#tweetProduct(href="#", data-type="tweet", target="_blank") [Tweet This]
+        
+23ecd410e0faa0fc510130557d22c8ea2592763c
 template(id='video'):
   .video-js-box.vim-css
     video(id='video-' + productId, controls, width= '550', height= '306')
