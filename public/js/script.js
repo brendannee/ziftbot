@@ -24,7 +24,7 @@ $(document).ready(function(){
     return false;
   });
   
-  $('#questions').on('click', '#sendProduct', function(){
+  $('#questions').on('click', '#emailProduct', function(){
     $('#sendForm').modal({backdrop:'static'});
     $('#sendForm').modal('show');
     return false;
@@ -85,7 +85,7 @@ function nextScreen(){
   }
     
   //Hide send button
-  $('#sendProduct').fadeOut();
+  $('#emailProduct').fadeOut();
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
@@ -103,8 +103,8 @@ function nextScreen(){
   var next_question = $(this).attr('data-next')
     , next_div = $(this).parents('.question').next();
   
-  if( $(this).attr('data-type') == 'product' || $(this).attr('data-type') == 'modal' ) {
-    //show product or modal
+  if( $(this).attr('data-type') == 'product') {
+    //leave this link alone
     return true;
   } else if(!gender && !recipient) {
     //start demographic questions
@@ -121,7 +121,7 @@ function nextScreen(){
     }
     scrollQuestions();
     
-    $('#sendProduct').fadeIn();
+    $('#emailProduct').fadeIn();
       
     //render videoJS and start video, if the next question contains a video
     if($('video', next_div).length){
@@ -244,9 +244,15 @@ function renderProduct(product) {
       setTimeout(function(){currentVid.play();}, 1000);
     }
     
-    //add id to send form
+    //add id to email form
     $('#sendForm .primary').attr('data-product', product.productId);
     $('#sendForm h3').html('Send ' + product.brandName + ' ' + product.productName + ' to a friend');
+    
+    //add info to tweet button
+    var tweetText = 'I just found ' + product.brandName + ' ' + product.productName + ' http://ziftbot.com/product/' + product.productId + ' on Ziftbot';
+    $('#tweetProduct')
+      .attr('href', 'http://twitter.com/home/?status=' + encodeURIComponent(tweetText))
+      .attr('title', 'Tweet ' + product.brandName + ' ' + product.productName);
   } else {
     //product no longer exists, so get a new question
     $('#questions .question:last-child').remove();
