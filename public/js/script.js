@@ -25,21 +25,41 @@ $(document).ready(function(){
   });
 
   $('#sendForm').on('click', '.primary', function(){
-    $('#sendForm form').validate({
-      submitHandler: function(form){
-        $.getJSON('/api/product/send', {
+    $(this).attr('disabled', 'disabled');
+      $.ajax({
+          url: '/api/product/send'
+        , type: 'get'
+        , dataType: 'json'
+        , data: {
             to: $('#to').val()
+          , sender: $('#sender').val()
           , firstName: capitaliseFirstLetter($('#firstName').val())
           , lastName:  capitaliseFirstLetter($('#lastName').val())
           , message: $('#message').val()
-          , product_id: 7766192
-          }, function(data){ console.log(data); });
-    
-        return false;
-      }   
-    });
+          , product_id: $(this).attr('data-product')
+          }
+        , success: function(data){ 
+            console.log(data); 
+            if(data==true){
+              $('#sendForm .primary').html('Sent');
+              setTimeout(function(){ $('#sendForm').modal('hide'); }, 800);
+            }
+          }
+        , error: function(){
+          $('#sendForm .primary').removeAttr('disabled');
+        }
+      });
+      return false;
   });
-    
+  
+  
+  $('#sendForm').bind('hide', function(){
+    //reset form
+    $('#sendForm .primary').removeAttr('disabled');
+    $('#sendForm input').val('');
+    $('#sendForm textarea').val('');
+    $('#sendForm .primary').html('Send')
+  });
     
   
   $('.modal-footer').on('click', '.close-modal', function(){
@@ -59,7 +79,7 @@ function nextScreen(){
   }
     
   //Hide send button
-  //$('#sendProduct').fadeOut();
+  $('#sendProduct').fadeOut();
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
@@ -209,6 +229,10 @@ function renderProduct(product) {
     if(document.location.pathname.split('/')[1] == 'product'){
       scrollQuestions();
     }
+    
+    //add id to send form
+    $('#sendForm .primary').attr('data-product', product.productId);
+    $('#sendForm h3').html('Send ' + product.brandName + ' ' + product.productName + ' to a friend');
   } else {
     //product no longer exists, so get a new question
     $.ajax({
