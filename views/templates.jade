@@ -7,7 +7,7 @@ template(id='question'):
         a.yes(data-next= a['yes'].next, data-type= type, data-value="yes", data-product= product)= a['yes'].text
       - else
         - each answer, i in a
-          a.btn.large.primary.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
+          a.no.multiple(data-next= answer.next, data-type= type, data-value= i, data-product= product)= answer.text
   
   
 template(id='product'):

@@ -48,6 +48,9 @@ function nextScreen(){
   catch(e){
   }
     
+  //Hide send button
+  $('#sendProduct').fadeOut();
+  
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
     
@@ -81,6 +84,8 @@ function nextScreen(){
       history.pushState({ productID: productID}, productID, 'product/' + productID)
     }
     scrollQuestions();
+    
+    $('#sendProduct').fadeIn();
       
     //render videoJS and start video, if the next question contains a video
     if($('video', next_div).length){
@@ -131,7 +136,7 @@ function displayQuestion(question) {
   console.log(question);
   
   // Log question as seen
-  if (question.id) {
+  if (parseInt(question.id, 10)) {
     ignore.push(question.id);
   }
   
@@ -166,37 +171,52 @@ function displayQuestion(question) {
 
 function renderProduct(product) {
   console.log(product);
+  if(product) {
 
-  var product = product[0]
-    , $product
-    , $media;
+    var product = product[0]
+      , $product
+      , $media;
 
-  product.recipientType = recipientType;
-  product.price = (product.styles.length) ? product.styles[0].price : '';
-  product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
+    product.recipientType = recipientType;
+    product.price = (product.styles.length) ? product.styles[0].price : '';
+    product.imageSrc = (product.styles.length) ? product.styles[0].imageUrl : '';
   
-  $.each(product.videos, function(i, value) {
-    if (value.videoEncodingExtension == 'mp4') {
-      product.mp4 = value.filename;
-    } else if (value.videoEncodingExtension == 'flv') {
-      product.swf = value.filename;
+    $.each(product.videos, function(i, value) {
+      if (value.videoEncodingExtension == 'mp4') {
+        product.mp4 = value.filename;
+      } else if (value.videoEncodingExtension == 'flv') {
+        product.swf = value.filename;
+      }
+    });
+
+    $media = (product.mp4) ? template('video', product) : template('image', product);
+
+    $product = template('product', product);
+    $product.find('.questionText').after($media);
+    $product.appendTo('#questions');
+  
+    // Render video, if present
+    if (product.mp4) {
+      currentVid = VideoJS.setup('video-' + product.productId);
     }
-  });
-
-  $media = (product.mp4) ? template('video', product) : template('image', product);
-
-  $product = template('product', product);
-  $product.find('.questionText').after($media);
-  $product.appendTo('#questions');
   
-  // Render video, if present
-  if (product.mp4) {
-    currentVid = VideoJS.setup('video-' + product.productId);
-  }
-  
-  //if we're on a product page, scroll questions
-  if(document.location.pathname.split('/')[1] == 'product'){
-    scrollQuestions();
+    //if we're on a product page, scroll questions
+    if(document.location.pathname.split('/')[1] == 'product'){
+      scrollQuestions();
+    }
+  } else {
+    //product no longer exists, so get a new question
+    $.ajax({
+        url: '/api/questions'
+      , dataType: 'json'
+      , data: {
+          recipient: recipient
+        , gender: gender
+        , ignore: ignore.join(',')
+        }
+      , success: displayQuestion
+      , error: questionError
+    });
   }
   
 }
@@ -207,6 +227,7 @@ function questionError(jqXHR, textStatus) {
         q: 'We\'re out of ideas.  Would you like to try ZiftBot again?'
       , a: [{ next: 1, text: 'Yes' }]
       , type: 'reset'
+      , product: null
     };
 
     template('question', error).appendTo('#questions');
@@ -223,7 +244,15 @@ function scrollQuestions(){
      marginLeft: indentation + 'px',
   }, {
      duration: 'slow',
-     easing: 'easeOutQuint'
+     easing: 'easeOutQuint',
+     complete: function(){
+       //check if indentation is less than
+       if( parseInt($('#questions').css('marginLeft'), 10) % parseInt($('#questionsFrame').css('width'), 10) != 0){
+         console.log('test');
+         var newIndentation = Math.floor(parseInt($('#questions').css('marginLeft'), 10) / parseInt($('#questionsFrame').css('width'), 10)) * parseInt($('#questionsFrame').css('width'), 10);
+         $('#questions').css('marginLeft',newIndentation);
+       }
+     }
   });
 }
 
