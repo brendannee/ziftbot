@@ -131,7 +131,7 @@ function nextScreen(){
     next_div.remove();
       
     $.ajax({
-        url: '/api/questions'
+        url: '/api/questions/random'
       , type: 'post'
       , dataType: 'json'
       , data: {
