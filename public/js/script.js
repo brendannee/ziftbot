@@ -23,6 +23,11 @@ $(document).ready(function(){
     $.getJSON('/api/demographics/1', displayQuestion);
     return false;
   });
+  
+  $('#questions').on('click', '#sendProduct', function(){
+     $('#sendForm').modal('show');
+     return false;
+  });
 
   $('#sendForm').on('click', '.primary', function(){
     $(this).attr('disabled', 'disabled');
@@ -97,7 +102,7 @@ function nextScreen(){
   var next_question = $(this).attr('data-next')
     , next_div = $(this).parents('.question').next();
   
-  if( $(this).attr('data-type') == 'product' ) {
+  if( $(this).attr('data-type') == 'product' || $(this).attr('data-type') == 'modal' ) {
     //show product
     return true;
   } else if(!gender && !recipient) {

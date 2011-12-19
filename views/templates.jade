@@ -27,7 +27,7 @@ template(id='product'):
       a.no(data-type= 'question') Meh.
       a.yes.zift(href= defaultProductUrl, title= brandName + ' ' + productName, data-type= 'product') Zift it!
       p.price= price + ' + free shipping '
-        a#sendProduct(href="#", data-controls-modal="sendForm", data-backdrop="true") [Send This]
+        a#sendProduct(href="#", data-type="modal", data-backdrop="true") [Send This]
         
 template(id='video'):
   .video-js-box.vim-css
