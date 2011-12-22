@@ -90,6 +90,12 @@ function nextScreen(){
   }
   catch(e){
   }
+  try{
+    currentVid.stop();
+  }
+  catch(e){
+  }
+  
   
   //log answer
   logDemographics($(this).attr('data-type'), $(this).attr('data-value'));
@@ -126,7 +132,7 @@ function nextScreen(){
     scrollQuestions();
       
     //render videoJS and start video, if the next question contains a video
-    if($('video', next_div).length){
+    if(currentVid){
       currentVid.play();
     }
   } else {
@@ -223,28 +229,39 @@ function renderProduct(product) {
         if (value.videoEncodingExtension == 'mp4') {
           product.mp4 = value.filename;
         } else if (value.videoEncodingExtension == 'flv') {
-          product.swf = value.filename;
+          product.flv = value.filename;
         }
       });
     }
 
-    $media = (product.mp4) ? template('video', product) : template('image', product);
+    $media = (product.mp4 && Modernizr.video.h264) ? template('HTML5Video', product) : (product.mp4) ? template('flvVideo', product) : template('image', product);
 
     $product = template('product', product);
     $product.find('.questionText').after($media);
     $('#questions .question:last-child').html($product);
   
     // Render video, if present
-    if (product.mp4) {
-      VideoJS.DOMReady(function(){
+    if (product.mp4 && Modernizr.video.h264) {
         currentVid = VideoJS.setup('video-' + product.productId);
+    } else if(product.flv){
+      currentVid = $f('video-' + product.productId , 'http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf', {
+        clip: {
+            url: product.flv
+          , height: 306
+          , width: 550
+          , autoPlay: false
+        }
       });
+    } else {
+      currentVid = '';
     }
   
     //if we're on a product page, start video then remove product ID
     if(express.product_id){
       delete express.product_id;
-      setTimeout(function(){currentVid.play();}, 1000);
+      if(currentVid){
+        setTimeout(function(){currentVid.play();}, 1000);
+      }
     }
     
     //add id to email form

@@ -31,17 +31,14 @@ template(id='product'):
       a.emailProduct(href="#", data-type="modal") [Email This]
       a.tweetProduct(href="#", data-type="tweet", target="_blank") [Tweet This]
 
-template(id='video'):
+template(id='HTML5Video'):
   .video-js-box.vim-css
     video(id='video-' + productId, controls, width= '550', height= '306')
       source(src=mp4, type='video/mp4')
-      - if (swf)
-        object(data=swf, type='application/x-shockwave-flash', width= '640', height= '360')
-          param(value=swf, name='movie')
-          - if (imageSrc)
-            param(value='autostart=true&amp;controlbar=over&amp;image=' + imageSrc + '&amp;file=\'' + mp4 + '\'')
-          - else
-            param(value='autostart=true&amp;controlbar=over&amp;file=\'' + mp4 + '\'')
+
+template(id='flvVideo'):
+  .video-js-box(id='video-' + productId)
+  
 
 template(id='image'):
   .productImage
