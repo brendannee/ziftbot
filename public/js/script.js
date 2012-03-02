@@ -6,6 +6,8 @@ var recipient
   , ignore = []
   , currentVid;
 
+var globalQuestion;
+
 $(document).ready(function(){
   //configure modal window
   $('#sendForm').modal({backdrop:'static'});
@@ -197,24 +199,14 @@ function displayQuestion(question) {
   question.no = question.no ? mustache(question.no, { pronoun: pronoun }): null;
   question.product = question.product || null;
 
-  template('question', question).appendTo('#questions');
-  
-  scrollQuestions();
+  globalQuestion = question;  // this will be used by questionFork;
 
-  if (question.product) {
-    console.log(question.product);
-
-    $('#questions').append('<div class="question product">');
-    
-    $.getJSON('/api/product/info/' + question.product, renderProduct);
-  }
+  $.getJSON('/api/product/info/' + question.product, questionFork);
 
 }
 
 function renderProduct(product) {
   console.log(product);
-  if(product) {
-
     var product = product[0]
       , $product
       , $media;
@@ -274,11 +266,6 @@ function renderProduct(product) {
     $('#questions .question:last-child .tweetProduct')
       .attr('href', 'http://twitter.com/home/?status=' + encodeURIComponent(tweetText))
       .attr('title', 'Tweet ' + product.brandName + ' ' + product.productName);
-  } else {
-    //product no longer exists, so get a new question
-    $('#questions .question:last-child').remove();
-    nextScreen();
-  }
   
 }
 
@@ -367,4 +354,27 @@ function logDemographics(type, value) {
 
 function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+//questionFork will call the functions to pass needed to pass show
+// the current question.  It is may "Fork" to the product route
+// if the question is a product question rather than a demographic one.
+//This was originally just in the end of the function displayQuestions
+// questionFork was implemented to for the purpose of not adding questions 
+// to the front end that were not in stock.  Previously questions were
+// added the user would see them jump by if the product was out of stock.
+function questionFork(product){
+  var skip = false;
+  if (globalQuestion.product  && !product){
+    skip = true;
+  }
+  
+  template('question', globalQuestion).appendTo('#questions');
+  
+  scrollQuestions();
+
+  if (globalQuestion.product && !skip) {
+    $('#questions').append('<div class="question product">');
+    renderProduct(product);
+  }
 }
