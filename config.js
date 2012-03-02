@@ -42,7 +42,6 @@ module.exports = function(app) {
 
     console.log('mongopass:' + mongoPass + ' mongoPass:' + ' mongoUser:' + mongoUser + 'MongoDB:' + mongoDB);
     var db = mongoose.connect('mongodb://'+ mongoUser +':' + mongoPass + '@' + mongoDB);
-    //var db = mongoose.connect('mongodb://ziftbot:' + mongoPass + '@dbh85.mongolab.com:27857/heroku_app2026251');
     app.set('db', db);
 
     var sendgridPass = process.env.SENDGRID_PW || keys.sendgrid;
