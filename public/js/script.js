@@ -199,10 +199,16 @@ function displayQuestion(question) {
   question.no = question.no ? mustache(question.no, { pronoun: pronoun }): null;
   question.product = question.product || null;
 
-  globalQuestion = question;  // this will be used by questionFork;
-
-  $.getJSON('/api/product/info/' + question.product, questionFork);
-
+  if(!question.product){
+    //Then we have demographic question lets go ahead and add it:
+    template('question', question).appendTo('#questions');
+    scrollQuestions();
+  }else{
+    //We have a product question we need to use addProd which 
+    // will first check to see if it is in stock
+    globalQuestion = question;  // this will be used by addProd
+    $.getJSON('/api/product/info/' + question.product, addProd);
+  }
 }
 
 function renderProduct(product) {
@@ -356,25 +362,28 @@ function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-//questionFork will call the functions to pass needed to pass show
-// the current question.  It is may "Fork" to the product route
-// if the question is a product question rather than a demographic one.
-//This was originally just in the end of the function displayQuestions
-// questionFork was implemented to for the purpose of not adding questions 
-// to the front end that were not in stock.  Previously questions were
-// added the user would see them jump by if the product was out of stock.
-function questionFork(product){
-  var skip = false;
-  if (globalQuestion.product  && !product){
-    skip = true;
-  }
-  
-  template('question', globalQuestion).appendTo('#questions');
-  
-  scrollQuestions();
-
-  if (globalQuestion.product && !skip) {
+function addProd(product){
+  if(product){ //base case we found a product that is in stock
+    //Scroll, Add and Render -> the product
+    template('question', globalQuestion).appendTo('#questions');
+    scrollQuestions();
+    console.log(globalQuestion.product);
     $('#questions').append('<div class="question product">');
     renderProduct(product);
+  }
+  else{ //recursive route, call displayQuestion again:
+    console.log('                 Skipping out of stock product');
+    $.ajax({
+      url: '/api/questions/random'
+    , type: 'post'
+    , dataType: 'json'
+    , data: {
+        recipients: recipient
+      , genders: gender
+      , ignore: ignore.join(',')
+      }
+    , success: displayQuestion
+    , error: questionError
+  });
   }
 }
