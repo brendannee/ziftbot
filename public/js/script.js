@@ -6,6 +6,8 @@ var recipient
   , ignore = []
   , currentVid;
 
+var globalQuestion;
+
 $(document).ready(function(){
   //configure modal window
   $('#sendForm').modal({backdrop:'static'});
@@ -197,24 +199,20 @@ function displayQuestion(question) {
   question.no = question.no ? mustache(question.no, { pronoun: pronoun }): null;
   question.product = question.product || null;
 
-  template('question', question).appendTo('#questions');
-  
-  scrollQuestions();
-
-  if (question.product) {
-    console.log(question.product);
-
-    $('#questions').append('<div class="question product">');
-    
-    $.getJSON('/api/product/info/' + question.product, renderProduct);
+  if(!question.product){
+    //Then we have demographic question lets go ahead and add it:
+    template('question', question).appendTo('#questions');
+    scrollQuestions();
+  }else{
+    //We have a product question we need to use addProd which 
+    // will first check to see if it is in stock
+    globalQuestion = question;  // this will be used by addProd
+    $.getJSON('/api/product/info/' + question.product, addProd);
   }
-
 }
 
 function renderProduct(product) {
   console.log(product);
-  if(product) {
-
     var product = product[0]
       , $product
       , $media;
@@ -274,11 +272,6 @@ function renderProduct(product) {
     $('#questions .question:last-child .tweetProduct')
       .attr('href', 'http://twitter.com/home/?status=' + encodeURIComponent(tweetText))
       .attr('title', 'Tweet ' + product.brandName + ' ' + product.productName);
-  } else {
-    //product no longer exists, so get a new question
-    $('#questions .question:last-child').remove();
-    nextScreen();
-  }
   
 }
 
@@ -367,4 +360,30 @@ function logDemographics(type, value) {
 
 function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function addProd(product){
+  if(product){ //base case we found a product that is in stock
+    //Scroll, Add and Render -> the product
+    template('question', globalQuestion).appendTo('#questions');
+    scrollQuestions();
+    console.log(globalQuestion.product);
+    $('#questions').append('<div class="question product">');
+    renderProduct(product);
+  }
+  else{ //recursive route, call displayQuestion again:
+    console.log('                 Skipping out of stock product');
+    $.ajax({
+      url: '/api/questions/random'
+    , type: 'post'
+    , dataType: 'json'
+    , data: {
+        recipients: recipient
+      , genders: gender
+      , ignore: ignore.join(',')
+      }
+    , success: displayQuestion
+    , error: questionError
+  });
+  }
 }

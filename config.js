@@ -36,8 +36,12 @@ module.exports = function(app) {
     var zapposKey = process.env.ZAPPOS_KEY || keys.zappos;
     app.set('zappos', new Zappos(zapposKey));
 
-    var mongoPass = process.env.MONGO_PW || keys.mongo;
-    var db = mongoose.connect('mongodb://ziftbot:' + mongoPass + '@dbh85.mongolab.com:27857/heroku_app2026251');
+    var mongoPass = process.env.MONGO_PW || keys.mongoPass;
+    var mongoUser = process.env.MONGO_USER || keys.mongoUser;
+    var mongoDB = process.env.MONGO_DB || keys.mongoDB;
+
+    console.log('mongopass:' + mongoPass + ' mongoPass:' + ' mongoUser:' + mongoUser + 'MongoDB:' + mongoDB);
+    var db = mongoose.connect('mongodb://'+ mongoUser +':' + mongoPass + '@' + mongoDB);
     app.set('db', db);
 
     var sendgridPass = process.env.SENDGRID_PW || keys.sendgrid;
